@@ -21,6 +21,7 @@
 
                 return tc switch
                 {
+                    0 => p0 * bu,
                     1 => p1 * bu,
                     2 => p2 * bu,
                     3 => p3 * bu,

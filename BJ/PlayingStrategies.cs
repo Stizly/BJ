@@ -2,114 +2,14 @@
 {
     public class PlayingStrategies
     {
-        public static Func<Card, Hand, bool> DoSurrender_2Deck_HS17 = new((upcard, hand) =>
-        {
-            //you must have hit 0 times, and you dont surrender with aces
-            if (hand.IsSoft)
-                return false;
-
-            //if your value is 16, surrender on Ace upcard only
-            if (hand.Cards.All(c => c.Value == 8))
-            {
-                return upcard.Rank == "A";
-            }
-
-            switch (hand.Value)
-            {
-                case 15:
-                case 16:
-                    return upcard.Value >= 10;
-                case 17:
-                    return upcard.Value == 11;
-                default:
-                    break;
-            }
-            return false;
-        });
-        public static Func<Card, Hand, bool> DoSplit_2Deck_HS17_DAS = new((upcard, hand) =>
-        {
-            if (hand.Cards[0].Rank == "A" && hand.Cards[0].Rank == hand.Cards[1].Rank)
-                return true;
-
-            if (hand.Cards[0].Value != hand.Cards[1].Value)
-                return false;
-
-            switch (hand.Cards[0].Value)
-            {
-                case 8:
-                    return true;
-                case 2:
-                case 3:
-                case 7:
-                    return upcard.Value <= 7;
-                case 6:
-                    return upcard.Value <= 6;
-                case 4:
-                    return upcard.Value == 5 || upcard.Value == 6;
-                case 9:
-                    return upcard.Value <= 9 && upcard.Value != 7;
-            }
-            return false;
-        });
-        public static Func<Card, Hand, bool> DoHit_2Deck_HS17 = new((upcard, hand) =>
-        {
-            if (hand.IsSoft == false)
-            {
-                if (hand.Value >= 17)
-                    return false;
-                if (hand.Value <= 11)
-                    return true;
-                if (hand.Value >= 12 && upcard.Value >= 7)
-                    return true;
-                if (hand.Value == 12 && upcard.Value <= 3)
-                    return true;
-            }
-            if (hand.IsSoft)
-            {
-                if (hand.Value >= 19)
-                    return false;
-                if (hand.Value <= 17)
-                    return true;
-                if (hand.Value == 18 && upcard.Value != 7 && upcard.Value != 8)
-                    return true;
-                if (hand.Value == 19 && upcard.Value == 6)
-                    return true;
-            }
-
-            return false;
-        });
-        public static Func<Card, Hand, bool> DoDoubleDown_2Deck_HS17 = new((upcard, hand) =>
-        {
-            if (!hand.IsSoft)
-            {
-                if (hand.Value == 11)
-                    return true;
-                if (hand.Value == 10 && upcard.Value <= 9)
-                    return true;
-                if (hand.Value == 9 && upcard.Value <= 6)
-                    return true;
-            }
-            else
-            {
-                switch (upcard.Value)
-                {
-                    case 6: return hand.Value <= 19;
-                    case 5: return hand.Value <= 18;
-                    case 4: return hand.Value <= 18 && hand.Value >= 14;
-                    case 3: return hand.Value == 17 || hand.Value == 18;
-                    case 2: return hand.Value == 18;
-                }
-            }
-            return false;
-        });
-
         /// <summary>
         /// Strategy from https://wizardofodds.com/games/blackjack/strategy/calculator/
         /// 2 decks, Hit soft 17, DAS allowed, Surrender allowed, Dealer Peeks
         /// </summary>
-        public static readonly Action<GameState>[][] BasicStrategy_HardHand_2D_H17 =
+        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_HardHand_2D_H17 =
         [
             //  2   3   4   5   6   7   8   9   10  A
+            [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //4    4 is here in case I they cannot split a 4 for whatever reason.
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //5
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //6
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //7
@@ -121,14 +21,14 @@
             [   S,  S,  S,  S,  S,  H,  H,  H,  H,  H   ],  //13
             [   S,  S,  S,  S,  S,  H,  H,  H,  H,  H   ],  //14
             [   S,  S,  S,  S,  S,  H,  H,  H,  Rh, Rh  ],  //15
-            [   S,  S,  S,  S,  S,  H,  H,  Rh, Rh, Rh  ],  //16
+            [   S,  S,  S,  S,  S,  H,  H,  H,  Rh, Rh  ],  //16
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  Rs  ],  //17
+            [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //18
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //19
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //20
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ]   //21
         ];
-
-        public static readonly Action<GameState>[][] BasicStrategy_SoftHand_2D_H17 =
+        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_SoftHand_2D_H17 =
         [
             //  2   3   4   5   6   7   8   9   10  A
             [   H,  H,  H,  Dh, Dh, H,  H,  H,  H,  H   ],  //13 A2
@@ -141,8 +41,7 @@
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //20 A9
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ]   //21 A10
         ];
-
-        public static readonly Action<GameState>[][] BasiStrategy_Pairs_2D_H17_DAS =
+        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_Pairs_2D_H17_DAS =
         [
             //  2   3   4   5   6   7   8   9   10  A
             [   P,  P,  P,  P,  P,  P,  H,  H,  H,  H   ],   //2,2
@@ -157,20 +56,54 @@
             [   P,  P,  P,  P,  P,  P,  P,  P,  P,  P   ],   //A,A
         ];
 
-        public static void H(GameState gamestate)
-        {
-        }
-        public static void Dh(GameState gamestate) { }
-        public static void Ds(GameState gamestate) { }
-        public static void S(GameState gamestate) { }
-        public static void Rh(GameState gamestate) { }
-        public static void Rs(GameState gamestate) { }
-        public static void P(GameState gamestate) { }
-        public static void Rp(GameState gamestate) { }
+        public static ActionEnum H(GameState gamestate) => ActionEnum.H;
+        public static ActionEnum Dh(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.H;
+        public static ActionEnum Ds(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.S;
+        public static ActionEnum S(GameState gamestate) => ActionEnum.S;
+        public static ActionEnum Rh(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.H;
+        public static ActionEnum Rs(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.S;
+        public static ActionEnum P(GameState gamestate) => ActionEnum.P;
+        public static ActionEnum Rp(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.P;
+    }
+
+    public enum ActionEnum
+    {
+        H, D, S, R, P
     }
 
     public class PlayingStrategy
     {
-        public Func<GameState>[][] Strategy { get; set; }
+        public Func<GameState, ActionEnum>[][] HardHandStrategy { get; set; }
+        public Func<GameState, ActionEnum>[][] SoftHandStrategy { get; set; }
+        public Func<GameState, ActionEnum>[][] PairsStrategy { get; set; }
+
+        public PlayingStrategy(Func<GameState, ActionEnum>[][] hardhand, Func<GameState, ActionEnum>[][] softhand, Func<GameState, ActionEnum>[][] pairs)
+        {
+            HardHandStrategy = hardhand;
+            SoftHandStrategy = softhand;
+            PairsStrategy = pairs;
+        }
+
+        public ActionEnum GetAction(GameState gamestate)
+        {
+            var dealerupcardindex = GetDealerUpcardIndex(gamestate.DealerUpcard);
+            if (gamestate.CanSplit())
+            {
+                return PairsStrategy[GetSplitRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
+            }
+            else if (gamestate.PlayerHand.IsSoft)
+            {
+                return SoftHandStrategy[GetSoftHandRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
+            }
+            else
+            {
+                return HardHandStrategy[GetHardHandRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
+            }
+        }
+
+        private static int GetDealerUpcardIndex(Card upcard) => upcard.Rank == "A" ? 9 : upcard.Value - 2;
+        private static int GetSplitRowIndex(IHand hand) => hand.Cards[0].Rank == "A" ? 9 : hand.Cards[0].Value - 2;
+        private static int GetSoftHandRowIndex(IHand hand) => hand.Value - 13;
+        private static int GetHardHandRowIndex(IHand hand) => hand.Value - 4;
     }
 }
