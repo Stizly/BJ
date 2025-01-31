@@ -1,28 +1,44 @@
 ﻿namespace BJ
 {
-    public class Blackjack
+    public class BlackjackRules
     {
         public int ShoeSize { get; private set; }
         public decimal DeckPenetration { get; set; }
-        public bool IsSurrenderAllowed { get; set; }
-        public bool DealerHitsSoft17 { get; set; }
-        public bool DealerPeeksForBlackjack { get; set; }
-        public decimal BlackjackPayout { get; set; }
+        public decimal BlackjackPayout { get; set; } = 1.5m;
+        public int PairSplitLimit { get; set; } = 3;
+        public bool DAS { get; set; } = true;
+        public bool IsSurrenderAllowed { get; set; } = false;
+        public bool DealerHitsSoft17 { get; set; } = true;
+        public bool DealerPeeksForBlackjack { get; set; } = true;
+        public int SplitAcesLimit { get; set; } = 1;
+        public bool CanHitAcesAfterSplit { get; set; } = false;
 
-        public Card DealersUpcard { get; private set; }
-        public Card DealersDowncard { get; private set; }
+        public BlackjackRules(int shoesize, decimal deckpen)
+        {
+            ShoeSize = shoesize;
+            DeckPenetration = deckpen;
+        }
+    }
 
-        public Hand DealersHand { get; private set; }
+    public class Table
+    {
+        public BlackjackRules Rules { get; private set; }
+
+        public Card DealerUpcard { get; private set; }
+        public Card DealerDowncard { get; private set; }
+
+        public Hand DealerHand { get; private set; }
         public List<Card> Shoe { get; private set; }
 
-        public int RunningCount { get; private set; } = 0;
+        public int RunningCount { get; private set; }
 
-        public Blackjack(int shoesize)
+        public Table(BlackjackRules rules)
         {
-            Shoe = new List<Card>();
-            DealersHand = new Hand();
+            Rules = rules;
 
-            ShoeSize = shoesize;
+            Shoe = [];
+            DealerHand = new Hand();
+
             RefillShoe();
         }
 
@@ -30,7 +46,7 @@
         {
             Shoe.Clear();
             RunningCount = 0;
-            for (int i = 0; i < ShoeSize; i++)
+            for (int i = 0; i < Rules.ShoeSize; i++)
             {
                 for (int rankindex = 0; rankindex < Card.RANKS.Length; rankindex++)
                 {
@@ -57,12 +73,10 @@
             }
         }
 
-        public void ClearHands(IEnumerable<Hand> playerhands)
+        public void ClearHands(Player player)
         {
-            DealersHand.Clear();
-            foreach (var hand in playerhands)
-                hand.Clear();
-
+            DealerHand.Clear();
+            player.ClearHands();
         }
 
         //dealer generally will deal Right to left, then themselves (face down), Right to left, then themselves face up
@@ -72,15 +86,15 @@
             {
                 hand.AddCard(Hit(), false);
             }
-            DealersDowncard = Hit();
-            DealersHand.AddCard(DealersDowncard, false);
+            DealerDowncard = Hit();
+            DealerHand.AddCard(DealerDowncard, false);
 
             foreach (var hand in PlayerHands)
             {
                 hand.AddCard(Hit(), false);
             }
-            DealersUpcard = Hit();
-            DealersHand.AddCard(DealersUpcard, false);
+            DealerUpcard = Hit();
+            DealerHand.AddCard(DealerUpcard, false);
         }
 
         public Card Hit()
@@ -96,7 +110,7 @@
 
         public bool DoReshuffleShoe()
         {
-            return Shoe.Count <= (1 - DeckPenetration) * 52 * ShoeSize;
+            return Shoe.Count <= (1 - Rules.DeckPenetration) * 52 * Rules.ShoeSize;
         }
         public decimal GetTrueCount() => RunningCount / (Shoe.Count / 52m);
     }

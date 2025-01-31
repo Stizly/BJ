@@ -2,7 +2,7 @@
 {
     public static class BettingStrategies
     {
-        public static Func<int, int, int> BuildStrategy(int d2, int d1, int p0, int p1, int p2, int p3, int p4)
+        public static Func<int, int, int> BuildStrategy(int d2, int d1, int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7)
         {
             return new Func<int, int, int>((tc, bu) =>
             {
@@ -14,10 +14,6 @@
                 {
                     return d1 * bu;
                 }
-                else if (tc >= 4)
-                {
-                    return p4 * bu;
-                }
 
                 return tc switch
                 {
@@ -25,7 +21,10 @@
                     1 => p1 * bu,
                     2 => p2 * bu,
                     3 => p3 * bu,
-                    _ => 0
+                    4 => p4 * bu,
+                    5 => p5 * bu,
+                    6 => p6 * bu,
+                    _ => p7 * bu,
                 };
             });
         }
@@ -68,5 +67,30 @@
                 _ => 10 * bu,
             };
         });
+    }
+
+    public interface IBettingStrategy
+    {
+        public Func<int, int, (int, int)> BettingStrategy { get; }
+    }
+
+    public class BettingStrategy
+    {
+        private Func<int, int, (int, int)> _bettingStrategy { get; set; }
+        public BettingStrategy(Func<int, int, int> bettingstrategy, int hands = 1)
+        {
+            _bettingStrategy = new Func<int, int, (int, int)>((tc, bu) => (bettingstrategy(tc, bu), hands));
+        }
+        /// <summary>
+        /// Assume hands played starts at TC 0, because you likely wouldn't start betting multiple hands at a negative count.
+        /// </summary>
+        /// <param name="bettingstrategy"></param>
+        /// <param name="hands"></param>
+        public BettingStrategy(Func<int, int, int> bettingstrategy, int[] hands)
+        {
+            _bettingStrategy = new Func<int, int, (int, int)>((tc, bu) => (bettingstrategy(tc, bu), tc < 0 ? 1 : tc >= hands.Length ? hands.Last() : hands[tc]));
+        }
+
+        public (int Bet, int Hands) GetBetAmountAndHands(int tc, int bu) => _bettingStrategy(tc, bu);
     }
 }

@@ -2,17 +2,31 @@
 {
     public class Player
     {
-        public List<Hand> Hands { get; set; }
-        public Hand CurrentHand { get; set; }
+        public List<Hand> Hands { get; set; } = [];
         public decimal BankRoll { get; set; }
-        public Func<int, int, int> BettingStrategy { get; set; } = BettingStrategies.Flat;
+        public BettingStrategy BettingStrategy { get; set; }
         public PlayingStrategy PlayingStrategy { get; set; }
 
-        public Player()
+        public Player(decimal bankroll, BettingStrategy bettingstrategy, PlayingStrategy playingstrategy)
         {
-            Hands = new List<Hand>() { new Hand() };
+            BankRoll = bankroll;
+            BettingStrategy = bettingstrategy;
+            PlayingStrategy = playingstrategy;
         }
 
-        public decimal DetermineBet(decimal tc, decimal bet) => BettingStrategy((int)tc, (int)bet);
+        public void AddHands(int handscount)
+        {
+            for (int i = 0; i < handscount; i++)
+            {
+                Hands.Add(new Hand());
+            }
+        }
+
+        public void ClearHands()
+        {
+            foreach (Hand hand in Hands)
+                hand.Clear();
+            Hands = [];
+        }
     }
 }

@@ -21,7 +21,7 @@
         public bool IsBusted { get; private set; }
         public int Hits { get; private set; }
         public bool IsBlackjack => Hits == 0 && Value == 21;
-        public bool CanSplit => Hits == 0 && (Cards[0].Value == Cards[1].Value || Cards[0].Rank == Cards[1].Rank);
+        public bool CanSplit => Hits == 0 && Cards.Count == 2 && (Cards[0].Value == Cards[1].Value || Cards[0].Rank == Cards[1].Rank);
         public int SplitCount { get; set; }
 
         public Hand()

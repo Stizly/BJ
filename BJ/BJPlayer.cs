@@ -3,12 +3,18 @@
     public class BJPlayer
     {
         public Player Player { get; set; }
-        public Blackjack Blackjack { get; set; }
+        public Table Table { get; set; }
+
+        public BJPlayer(Table table, Player player)
+        {
+            Table = table;
+            Player = player;
+        }
 
         public void Play(decimal bet)
         {
-            var upcard = Blackjack.DealersUpcard;
-            var dealershand = Blackjack.DealersHand;
+            var upcard = Table.DealerUpcard;
+            var dealershand = Table.DealerHand;
 
             List<HandAndResult> undecidedhands = [];
             List<HandAndResult> decidedhands = [];
@@ -20,7 +26,7 @@
             ProcessResolvedHands(decidedhands);
 
 #if DEBUG
-            Console.WriteLine($"Dealer's downcard is {Blackjack.DealersDowncard.Rank}");
+            Console.WriteLine($"Dealer's downcard is {Table.DealerDowncard.Rank}");
 #endif
             FinishDealerDrawing();
             ResolveRemainingHands(undecidedhands);
@@ -37,10 +43,10 @@
                 {
                     DealerUpcard = upcard,
                     PlayerHand = hand,
-                    IsSurrenderAllowed = Blackjack.IsSurrenderAllowed
+                    IsSurrenderAllowed = Table.Rules.IsSurrenderAllowed
                 };
                 //if you both get blackjack
-                if (Blackjack.DealersHand.IsBlackjack && hand.IsBlackjack)
+                if (Table.DealerHand.IsBlackjack && hand.IsBlackjack)
                 {
                     decidedhands.Add(new HandAndResult() { Hand = hand, Payout = 0, Message = "Both you and dealer got blackjack. Pushing." });
                     continue;
@@ -50,7 +56,7 @@
                     decidedhands.Add(new HandAndResult { Hand = hand, Payout = 1.5m * bet, Message = "You won with blackjack!" });
                     continue;
                 }
-                else if (Blackjack.DealersHand.IsBlackjack)
+                else if (Table.DealerHand.IsBlackjack)
                 {
                     decidedhands.Add(new HandAndResult { Hand = hand, Payout = -bet, Message = "Dealer had blackjack. Hand lost." });
                     continue;
@@ -62,7 +68,7 @@
                         decidedhands.Add(new HandAndResult { Hand = hand, Payout = -0.5m * bet, Message = $"Surrendering on a {hand.Value} against dealer's {upcard.Rank}" });
                         continue;
                     case ActionEnum.D:
-                        var doubledown = Blackjack.Hit();
+                        var doubledown = Table.Hit();
                         hand.AddCard(doubledown);
                         undecidedhands.Add(new HandAndResult { Hand = hand, Payout = 2 * bet, Message = $"Doubled down for a total of {hand.Value} against dealer's {upcard.Rank}." });
                         continue;
@@ -75,9 +81,9 @@
                         Card card2 = new(hand.Cards[1].Rank, hand.Cards[1].Suit);
 
                         hand1.AddCard(card1, false);
-                        hand1.AddCard(Blackjack.Hit(), false);
+                        hand1.AddCard(Table.Hit(), false);
                         hand2.AddCard(card2, false);
-                        hand2.AddCard(Blackjack.Hit(), false);
+                        hand2.AddCard(Table.Hit(), false);
 
                         hand.Clear();
 
@@ -87,7 +93,7 @@
                         while (Player.PlayingStrategy.GetAction(gs) == ActionEnum.H)
                         {
                             int previousvalue = hand.Value;
-                            var hit = Blackjack.Hit();
+                            var hit = Table.Hit();
                             hand.AddCard(hit);
                             if (hand.IsBusted)
                             {
@@ -120,12 +126,12 @@
         }
         private void FinishDealerDrawing()
         {
-            while (Blackjack.DealersHand.Value < 17 || (Blackjack.DealersHand.Value == 17 && Blackjack.DealersHand.IsSoft))
+            while (Table.DealerHand.Value < 17 || (Table.DealerHand.Value == 17 && Table.DealerHand.IsSoft))
             {
-                var hitcard = Blackjack.Hit();
-                Blackjack.DealersHand.AddCard(hitcard);
+                var hitcard = Table.Hit();
+                Table.DealerHand.AddCard(hitcard);
 #if DEBUG
-                Console.WriteLine($"The dealer drew a {hitcard.Rank} for a total of {Blackjack.DealersHand.Value}.");
+                Console.WriteLine($"The dealer drew a {hitcard.Rank} for a total of {Table.DealerHand.Value}.");
 #endif
             }
         }
@@ -133,24 +139,24 @@
         {
             foreach (var result in undecidedhands)
             {
-                if (result.Hand.Value == Blackjack.DealersHand.Value)
+                if (result.Hand.Value == Table.DealerHand.Value)
                 {
 #if DEBUG
                     Console.WriteLine($"Hand pushed with {result.Hand.Value}.");
 #endif
                 }
 
-                else if (result.Hand.Value > Blackjack.DealersHand.Value || Blackjack.DealersHand.IsBusted)
+                else if (result.Hand.Value > Table.DealerHand.Value || Table.DealerHand.IsBusted)
                 {
 #if DEBUG
-                    Console.WriteLine($"Your {result.Hand.Value} beat the dealer's {Blackjack.DealersHand.Value}. You win {result.Payout}!");
+                    Console.WriteLine($"Your {result.Hand.Value} beat the dealer's {Table.DealerHand.Value}. You win {result.Payout}!");
 #endif
                     Player.BankRoll += result.Payout;
                 }
                 else
                 {
 #if DEBUG
-                    Console.WriteLine($"The dealers {Blackjack.DealersHand.Value} beat your {result.Hand.Value}. You lose {result.Payout}.");
+                    Console.WriteLine($"The dealers {Table.DealerHand.Value} beat your {result.Hand.Value}. You lose {result.Payout}.");
 #endif
                     Player.BankRoll -= result.Payout;
                 }
