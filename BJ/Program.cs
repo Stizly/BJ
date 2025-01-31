@@ -2,10 +2,10 @@
 
 const decimal INITIALBANKROLL = 5000;
 const int ROUNDS = 10000;
-const int ROUNDSPERHOUR = 1000;
-const int CONCURRENTPLAYERS = 100;
+const int ROUNDSPERHOUR = 100;
+const int CONCURRENTPLAYERS = 1000;
 const int BETTINGUNIT = 1;
-const decimal DECKPEN = 0.75m;
+const decimal DECKPEN = 0.7m;
 const int SHOESIZE = 2;
 const decimal BJPAYOUT = 1.5m;
 
@@ -17,12 +17,12 @@ decimal maxprofit = 0;
 
 var rules = new BlackjackRules(SHOESIZE, DECKPEN)
 {
-    IsSurrenderAllowed = true,
+    IsSurrenderAllowed = false,
     BlackjackPayout = BJPAYOUT,
     DealerPeeksForBlackjack = true, //NOT IMPLEMENTED ALWAYS CONSIDERED TRUE
     DAS = true, //NOT IMPLEMENTED. ALWAYS CONSIDERED TRUE
-    CanHitAcesAfterSplit = false, //NOT IMPLEMENTED. ALWAYS CONSIDERED TRUE
-    DealerHitsSoft17 = true, //NOT IMPLEMENTED. ALWAYS CONSIDERED TRUE
+    CanHitAcesAfterSplit = false,
+    DealerHitsSoft17 = true,
     PairSplitLimit = 3, //NOT IMPLEMENTED - PLAYER CAN SPLIT ANY HAND ANY NUMBER OF TIMES
     SplitAcesLimit = 1  //NOT IMPLEMENTED - PLAYER CAN SPLIT ANY HAND ANY NUMBER OF TIMES
 };
@@ -32,7 +32,7 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
     var table = new Table(rules);
     var player = new Player(
         INITIALBANKROLL,
-        new(BettingStrategies.BuildStrategy(0, 10, 10, 15, 15, 20, 30, 40, 60, 100), [1, 2]),
+        new(BettingStrategies.BuildBetSpread(0, 10, 10, 10, 20, 30, 40, 50, 100, 150), [1, 1, 2]),
         new PlayingStrategy(PlayingStrategies.BasicStrategy_HardHand_2D_H17, PlayingStrategies.BasicStrategy_SoftHand_2D_H17, PlayingStrategies.BasicStrategy_Pairs_2D_H17_DAS)
     );
 
@@ -41,7 +41,7 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
     var bankroll = PlayBlackjack(bjplayer, BETTINGUNIT, ROUNDS);
     var currentprofit = bankroll - INITIALBANKROLL;
     runningprofits += currentprofit;
-    if (currentprofit <= -INITIALBANKROLL)
+    if (currentprofit < -INITIALBANKROLL)
         bankruptcount++;
     else if (currentprofit > maxprofit)
         maxprofit = currentprofit;
@@ -51,7 +51,7 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
 
 
 var averageprofit = runningprofits / CONCURRENTPLAYERS;
-Console.WriteLine($"Average profits: ${averageprofit}");
+Console.WriteLine($"Average profits: ${averageprofit} over {ROUNDS * CONCURRENTPLAYERS} rounds.");
 Console.WriteLine($"Average profit/hour: ${averageprofit / ROUNDSPERHOUR}");
 Console.WriteLine($"Bankruptices: {bankruptcount} for a {bankruptcount * 100 / CONCURRENTPLAYERS}% ROR.");
 Console.WriteLine($"Max profit: ${maxprofit}");
@@ -64,7 +64,7 @@ decimal PlayBlackjack(BJPlayer bjplayer, int bettingunit, int rounds)
 
     for (int i = 0; i < rounds; i++)
     {
-        if (player.BankRoll <= 0)
+        if (player.BankRoll < 0)
             return player.BankRoll;
 
         var bet = player.BettingStrategy.GetBetAmountAndHands((int)bj.GetTrueCount(), bettingunit);

@@ -56,6 +56,29 @@
             [   P,  P,  P,  P,  P,  P,  P,  P,  P,  P   ],   //A,A
         ];
 
+        public static readonly Func<GameState, ActionEnum>[][] Deviations_HardHand =
+        [
+            //  2   3   4   5   6   7   8   9   10  A
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //4    4 is here in case I they cannot split a 4 for whatever reason.
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //5
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //6
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //7
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //8
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //9
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //10
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //11
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //12
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //13
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //14
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //15
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //16
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //17
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //18
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //19
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //20
+            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //21
+        ];
+
         public static ActionEnum H(GameState gamestate) => ActionEnum.H;
         public static ActionEnum Dh(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.H;
         public static ActionEnum Ds(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.S;
@@ -64,11 +87,12 @@
         public static ActionEnum Rs(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.S;
         public static ActionEnum P(GameState gamestate) => ActionEnum.P;
         public static ActionEnum Rp(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.P;
+        public static ActionEnum @_(GameState gamestate) => ActionEnum._;
     }
 
     public enum ActionEnum
     {
-        H, D, S, R, P
+        H, D, S, R, P, _
     }
 
     public class PlayingStrategy
@@ -76,6 +100,7 @@
         public Func<GameState, ActionEnum>[][] HardHandStrategy { get; set; }
         public Func<GameState, ActionEnum>[][] SoftHandStrategy { get; set; }
         public Func<GameState, ActionEnum>[][] PairsStrategy { get; set; }
+        public Func<GameState, ActionEnum>[][] HardHandDeviations { get; set; }
 
         public PlayingStrategy(Func<GameState, ActionEnum>[][] hardhand, Func<GameState, ActionEnum>[][] softhand, Func<GameState, ActionEnum>[][] pairs)
         {

@@ -2,7 +2,21 @@
 {
     public static class BettingStrategies
     {
-        public static Func<int, int, int> BuildStrategy(int d2, int d1, int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7)
+        /// <summary>
+        /// Build a bet spread from true count -2 to +7. if the TC is 3 and betting unit $10, it would bet p3*10
+        /// </summary>
+        /// <param name="d2"></param>
+        /// <param name="d1"></param>
+        /// <param name="p0"></param>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="p3"></param>
+        /// <param name="p4"></param>
+        /// <param name="p5"></param>
+        /// <param name="p6"></param>
+        /// <param name="p7"></param>
+        /// <returns></returns>
+        public static Func<int, int, int> BuildBetSpread(int d2, int d1, int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7)
         {
             return new Func<int, int, int>((tc, bu) =>
             {

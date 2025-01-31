@@ -73,8 +73,14 @@
                         undecidedhands.Add(new HandAndResult { Hand = hand, Payout = 2 * bet, Message = $"Doubled down for a total of {hand.Value} against dealer's {upcard.Rank}." });
                         continue;
                     case ActionEnum.P:
-                        var hand1 = new Hand();
-                        var hand2 = new Hand();
+                        var hand1 = new Hand()
+                        {
+                            SplitCount = hand.SplitCount + 1
+                        };
+                        var hand2 = new Hand()
+                        {
+                            SplitCount = hand.SplitCount + 1
+                        };
 
                         //create new cards to clear hard/soft ace pairs
                         Card card1 = new(hand.Cards[0].Rank, hand.Cards[0].Suit);
@@ -87,7 +93,13 @@
 
                         hand.Clear();
 
-                        ProcessHands(bet, [hand1, hand2], upcard, undecidedhands, decidedhands);
+                        if (!Table.Rules.CanHitAcesAfterSplit && card1.Rank == "A" && card2.Rank == "A")
+                            undecidedhands.AddRange([
+                                new(){ Hand = hand1, Payout=bet, Message=$"Split aces for a total of {hand1.Value}." },
+                                new() { Hand = hand2, Payout = bet, Message = $"Split aces for a total of {hand2.Value}." }
+                            ]);
+                        else
+                            ProcessHands(bet, [hand1, hand2], upcard, undecidedhands, decidedhands);
                         continue;
                     case ActionEnum.H:
                         while (Player.PlayingStrategy.GetAction(gs) == ActionEnum.H)
@@ -126,7 +138,7 @@
         }
         private void FinishDealerDrawing()
         {
-            while (Table.DealerHand.Value < 17 || (Table.DealerHand.Value == 17 && Table.DealerHand.IsSoft))
+            while (Table.DealerHand.Value < 17 || (Table.Rules.DealerHitsSoft17 && Table.DealerHand.Value == 17 && Table.DealerHand.IsSoft))
             {
                 var hitcard = Table.Hit();
                 Table.DealerHand.AddCard(hitcard);
