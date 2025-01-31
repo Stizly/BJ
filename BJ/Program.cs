@@ -32,7 +32,7 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
     var table = new Table(rules);
     var player = new Player(
         INITIALBANKROLL,
-        new(BettingStrategies.BuildBetSpread(0, 10, 10, 10, 20, 30, 40, 50, 100, 150), [1, 1, 2]),
+        new BettingStrategy(BettingStrategies.BuildBetSpread([0, 0, 0, 10, 20, 30, 40, 60, 100]), [1, 1, 2]),
         new PlayingStrategy(PlayingStrategies.BasicStrategy_HardHand_2D_H17, PlayingStrategies.BasicStrategy_SoftHand_2D_H17, PlayingStrategies.BasicStrategy_Pairs_2D_H17_DAS)
     );
 
@@ -56,6 +56,8 @@ Console.WriteLine($"Average profit/hour: ${averageprofit / ROUNDSPERHOUR}");
 Console.WriteLine($"Bankruptices: {bankruptcount} for a {bankruptcount * 100 / CONCURRENTPLAYERS}% ROR.");
 Console.WriteLine($"Max profit: ${maxprofit}");
 
+Console.WriteLine("Press any key to end.");
+Console.ReadKey();
 
 decimal PlayBlackjack(BJPlayer bjplayer, int bettingunit, int rounds)
 {

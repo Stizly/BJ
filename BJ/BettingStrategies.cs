@@ -42,6 +42,19 @@
                 };
             });
         }
+        /// <summary>
+        /// Assume bet spread starts at -2. so [0, 0, 1, 2, ...] would Wong out at -1, and -2 and below and start betting 1 times the bet unit at TC 0, 2 times BU at TC 1, etc.
+        /// d2throughN must be longer than 2!
+        /// </summary>
+        /// <param name="d2throughN"></param>
+        /// <returns></returns>
+        public static Func<int, int, int> BuildBetSpread(int[] d2throughN)
+        {
+            return new Func<int, int, int>((tc, bu) =>
+            {
+                return bu * (tc <= -2 ? d2throughN[0] : tc + 2 >= d2throughN.Length ? d2throughN.Last() : d2throughN[tc + 2]);
+            });
+        }
         public static Func<int, int, int> Flat = new((tc, bu) => bu);
         public static Func<int, int, int> Linear = new((tc, bu) =>
         {
