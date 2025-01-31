@@ -1,6 +1,6 @@
 ﻿using BJ;
 
-const decimal INITIALBANKROLL = 5000;
+const decimal INITIALBANKROLL = 10000;
 const int ROUNDS = 10000;
 const int ROUNDSPERHOUR = 100;
 const int CONCURRENTPLAYERS = 1000;
@@ -32,7 +32,7 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
     var table = new Table(rules);
     var player = new Player(
         INITIALBANKROLL,
-        new BettingStrategy(BettingStrategies.BuildBetSpread([0, 0, 0, 10, 20, 30, 40, 60, 100]), [1, 1, 2]),
+        new BettingStrategy(BettingStrategies.BuildBetSpread([0, 10, 10, 10, 10, 20, 30, 40, 50]), [1, 1, 2]),
         new PlayingStrategy(PlayingStrategies.BasicStrategy_HardHand_2D_H17, PlayingStrategies.BasicStrategy_SoftHand_2D_H17, PlayingStrategies.BasicStrategy_Pairs_2D_H17_DAS)
     );
 
@@ -53,7 +53,7 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
 var averageprofit = runningprofits / CONCURRENTPLAYERS;
 Console.WriteLine($"Average profits: ${averageprofit} over {ROUNDS * CONCURRENTPLAYERS} rounds.");
 Console.WriteLine($"Average profit/hour: ${averageprofit / ROUNDSPERHOUR}");
-Console.WriteLine($"Bankruptices: {bankruptcount} for a {bankruptcount * 100 / CONCURRENTPLAYERS}% ROR.");
+Console.WriteLine($"Bankruptices: {bankruptcount} for a {bankruptcount * 100 / (decimal)CONCURRENTPLAYERS}% RoR.");
 Console.WriteLine($"Max profit: ${maxprofit}");
 
 Console.WriteLine("Press any key to end.");
