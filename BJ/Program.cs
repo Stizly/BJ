@@ -1,10 +1,10 @@
 ﻿using BJ;
 
-const decimal INITIALBANKROLL = 10000;
+const decimal INITIALBANKROLL = 5000;
 const int ROUNDS = 10000;
 const int ROUNDSPERHOUR = 100;
 const int CONCURRENTPLAYERS = 1000;
-const int BETTINGUNIT = 1;
+const int BETTINGUNIT = 10;
 const decimal DECKPEN = 0.7m;
 const int SHOESIZE = 2;
 const decimal BJPAYOUT = 1.5m;
@@ -32,8 +32,11 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
     var table = new Table(rules);
     var player = new Player(
         INITIALBANKROLL,
-        new BettingStrategy(BettingStrategies.BuildBetSpread([0, 10, 10, 10, 10, 20, 30, 40, 50]), [1, 1, 2]),
+        new BettingStrategy(BettingStrategies.BuildBetSpread([0, 1, 1, 1, 2, 3, 4, 5, 6, 10]), [1, 1, 2]),
         new PlayingStrategy(PlayingStrategies.BasicStrategy_HardHand_2D_H17, PlayingStrategies.BasicStrategy_SoftHand_2D_H17, PlayingStrategies.BasicStrategy_Pairs_2D_H17_DAS)
+        {
+            HardHandDeviations = PlayingStrategies.Deviations_HardHand_SD
+        }
     );
 
     var bjplayer = new BJPlayer(table, player);

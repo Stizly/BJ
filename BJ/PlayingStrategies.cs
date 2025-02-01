@@ -51,43 +51,46 @@
             [   P,  P,  P,  P,  P,  P,  H,  H,  H,  H   ],   //6,6
             [   P,  P,  P,  P,  P,  P,  P,  H,  H,  H   ],   //7,7
             [   P,  P,  P,  P,  P,  P,  P,  P,  P,  Rp  ],   //8,8
-            [   P,  P,  P,  P,  P,  H,  P,  P,  S,  S   ],   //9,9
+            [   P,  P,  P,  P,  P,  S,  P,  P,  S,  S   ],   //9,9
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],   //10,10
             [   P,  P,  P,  P,  P,  P,  P,  P,  P,  P   ],   //A,A
         ];
 
-        public static readonly Func<GameState, ActionEnum>[][] Deviations_HardHand =
+        public static readonly (int, Func<GameState, ActionEnum>)?[][] Deviations_HardHand_SD =
         [
-            //  2   3   4   5   6   7   8   9   10  A
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //4    4 is here in case I they cannot split a 4 for whatever reason.
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //5
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //6
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //7
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //8
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //9
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //10
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //11
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //12
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //13
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //14
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //15
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //16
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //17
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //18
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //19
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //20
-            [   _,  _,  _,  _,  _,  _,  _,  _,  _,  _   ],  //21
+            //  2       3       4       5       6       7       8       9       10      A
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //4
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //5
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //6
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //7
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //8
+            [   (+1,Dh),null,   null,   null,   null,   (+3,Dh),null,   null,   null,   null    ],  //9
+            [   null,   null,   null,   null,   null,   null,   null,   null,   (+4,Dh),(+4,Dh) ],  //10
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   (+1,Dh) ],  //11
+            [   (+3,S), (+2,S), Hlte0,  (-2,H), (-1,H), null,   null,   null,   null,   null    ],  //12
+            [   (-1,H), (-2,H), null,   null,   null,   null,   null,   null,   null,   null    ],  //13
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //14
+            [   null,   null,   null,   null,   null,   null,   null,   null,   (+4,S), null    ],  //15
+            [   null,   null,   null,   null,   null,   null,   null,   (+5,S), Sgte0,  null    ],  //16
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //17
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //18
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //19
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //20
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //21
         ];
 
-        public static ActionEnum H(GameState gamestate) => ActionEnum.H;
-        public static ActionEnum Dh(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.H;
-        public static ActionEnum Ds(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.S;
-        public static ActionEnum S(GameState gamestate) => ActionEnum.S;
-        public static ActionEnum Rh(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.H;
-        public static ActionEnum Rs(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.S;
-        public static ActionEnum P(GameState gamestate) => ActionEnum.P;
-        public static ActionEnum Rp(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.P;
-        public static ActionEnum @_(GameState gamestate) => ActionEnum._;
+        private static ActionEnum H(GameState gamestate) => ActionEnum.H;
+        private static ActionEnum Dh(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.H;
+        private static ActionEnum Ds(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.S;
+        private static ActionEnum S(GameState gamestate) => ActionEnum.S;
+        private static ActionEnum Rh(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.H;
+        private static ActionEnum Rs(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.S;
+        private static ActionEnum P(GameState gamestate) => ActionEnum.P;
+        private static ActionEnum Rp(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.P;
+
+        //It is unclear if (0, H) means hit at or above 0, or hit at or below 0, so for 0-based deviations, use methods like this
+        private static (int, Func<GameState, ActionEnum>) Hlte0 => (0, (GameState gs) => gs.TrueCount <= 0 ? ActionEnum.H : ActionEnum.S);
+        private static (int, Func<GameState, ActionEnum>) Sgte0 => (0, (GameState gs) => gs.TrueCount >= 0 ? ActionEnum.S : ActionEnum.H);
     }
 
     public enum ActionEnum
@@ -100,7 +103,7 @@
         public Func<GameState, ActionEnum>[][] HardHandStrategy { get; set; }
         public Func<GameState, ActionEnum>[][] SoftHandStrategy { get; set; }
         public Func<GameState, ActionEnum>[][] PairsStrategy { get; set; }
-        public Func<GameState, ActionEnum>[][] HardHandDeviations { get; set; }
+        public (int AtTrueCount, Func<GameState, ActionEnum> Deviation)?[][] HardHandDeviations { get; set; }
 
         public PlayingStrategy(Func<GameState, ActionEnum>[][] hardhand, Func<GameState, ActionEnum>[][] softhand, Func<GameState, ActionEnum>[][] pairs)
         {
@@ -122,7 +125,13 @@
             }
             else
             {
-                return HardHandStrategy[GetHardHandRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
+                var rowindex = GetHardHandRowIndex(gamestate.PlayerHand);
+                var deviation = HardHandDeviations?[rowindex][dealerupcardindex];
+
+                if (deviation != null && UseDeviation(deviation.Value.AtTrueCount, gamestate.TrueCount))
+                    return deviation.Value.Deviation(gamestate);
+                else
+                    return HardHandStrategy[rowindex][dealerupcardindex](gamestate);
             }
         }
 
@@ -130,5 +139,6 @@
         private static int GetSplitRowIndex(IHand hand) => hand.Cards[0].Rank == "A" ? 9 : hand.Cards[0].Value - 2;
         private static int GetSoftHandRowIndex(IHand hand) => hand.Value - 13;
         private static int GetHardHandRowIndex(IHand hand) => hand.Value - 4;
+        private bool UseDeviation(int attruecount, int truecount) => attruecount == 0 || (attruecount < 0 && truecount <= attruecount) || (attruecount > 0 && truecount >= attruecount);
     }
 }
