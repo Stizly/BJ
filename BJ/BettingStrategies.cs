@@ -3,102 +3,33 @@
     public static class BettingStrategies
     {
         /// <summary>
-        /// Build a bet spread from true count -2 to +7. if the TC is 3 and betting unit $10, it would bet p3*10
+        /// Negatives go from -N to -1, so [0,0,1] would be 0 at -3, 0 at -2, 1 at -1.
         /// </summary>
-        /// <param name="d2"></param>
-        /// <param name="d1"></param>
-        /// <param name="p0"></param>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <param name="p3"></param>
-        /// <param name="p4"></param>
-        /// <param name="p5"></param>
-        /// <param name="p6"></param>
-        /// <param name="p7"></param>
+        /// <param name="negatives"></param>
+        /// <param name="positivesandzero"></param>
         /// <returns></returns>
-        public static Func<int, int, int> BuildBetSpread(int d2, int d1, int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7)
+        public static Func<int, int, int> BuildBetSpread(int[] negatives, int[] positivesandzero)
         {
             return new Func<int, int, int>((tc, bu) =>
             {
-                if (tc <= -2)
+                if (tc < 0)
                 {
-                    return d2 * bu;
+                    //TC -4 with negatives [0, 0, 1], use 0
+                    if (Math.Abs(tc) > negatives.Length)
+                        return bu * negatives[0];
+                    else
+                        return bu * negatives[negatives.Length + tc];   //if negatives.Length == 3, tc -3 would return negatives[0], tc -1 would return negatives[2], etc.
                 }
-                else if (tc == -1)
+                else
                 {
-                    return d1 * bu;
+                    //TC +4 with positives [1, 1, 2, 4] would return 4 * bu.
+                    if (tc + 1 > positivesandzero.Length)
+                        return bu * positivesandzero.Last();
+                    else
+                        return bu * positivesandzero[tc];  //tc +1 would return positives[1], tc+2 would return positives[2], etc.
                 }
-
-                return tc switch
-                {
-                    0 => p0 * bu,
-                    1 => p1 * bu,
-                    2 => p2 * bu,
-                    3 => p3 * bu,
-                    4 => p4 * bu,
-                    5 => p5 * bu,
-                    6 => p6 * bu,
-                    _ => p7 * bu,
-                };
             });
         }
-        /// <summary>
-        /// Assume bet spread starts at -2. so [0, 0, 1, 2, ...] would Wong out at -1, and -2 and below and start betting 1 times the bet unit at TC 0, 2 times BU at TC 1, etc.
-        /// d2throughN must be longer than 2!
-        /// </summary>
-        /// <param name="d2throughN"></param>
-        /// <returns></returns>
-        public static Func<int, int, int> BuildBetSpread(int[] d2throughN)
-        {
-            return new Func<int, int, int>((tc, bu) =>
-            {
-                return bu * (tc <= -2 ? d2throughN[0] : tc + 2 >= d2throughN.Length ? d2throughN.Last() : d2throughN[tc + 2]);
-            });
-        }
-        public static Func<int, int, int> Flat = new((tc, bu) => bu);
-        public static Func<int, int, int> Linear = new((tc, bu) =>
-        {
-            if (tc <= 0)
-            {
-                return bu;
-            }
-            return bu * Math.Min(tc, 12);
-        });
-
-        public static Func<int, int, int> Exponential = new((tc, bu) =>
-        {
-            if (tc <= 0)
-            {
-                return bu;
-            }
-            return bu * (int)Math.Pow(Math.Min(tc, 5), 2);
-        });
-
-        public static Func<int, int, int> WongLinear = new((tc, bu) =>
-        {
-            if (tc < 0)
-                return 0;
-            else if (tc == 1)
-                return bu;
-            else
-                return bu * Math.Min(tc, 12);
-        });
-
-        public static Func<int, int, int> GrowingLinear = new((tc, bu) =>
-        {
-            if (tc <= 1)
-                return bu;
-            return tc switch
-            {
-                2 or 3 or 4 => tc * bu,
-                _ => 10 * bu,
-            };
-        });
-    }
-
-    public interface IBettingStrategy
-    {
-        public Func<int, int, (int, int)> BettingStrategy { get; }
     }
 
     public class BettingStrategy
