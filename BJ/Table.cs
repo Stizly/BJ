@@ -1,23 +1,16 @@
 ﻿namespace BJ
 {
-    public class BlackjackRules
+    public class BlackjackRules(int shoesize, decimal deckpen)
     {
-        public int ShoeSize { get; private set; }
-        public decimal DeckPenetration { get; set; }
+        public int ShoeSize { get; private set; } = shoesize;
+        public decimal DeckPenetration { get; set; } = deckpen;
         public decimal BlackjackPayout { get; set; } = 1.5m;
         public int PairSplitLimit { get; set; } = 3;
         public bool DAS { get; set; } = true;
         public bool IsSurrenderAllowed { get; set; } = false;
         public bool DealerHitsSoft17 { get; set; } = true;
-        public bool DealerPeeksForBlackjack { get; set; } = true;
-        public int SplitAcesLimit { get; set; } = 1;
         public bool CanHitAcesAfterSplit { get; set; } = false;
-
-        public BlackjackRules(int shoesize, decimal deckpen)
-        {
-            ShoeSize = shoesize;
-            DeckPenetration = deckpen;
-        }
+        public bool CanResplitAces { get; set; } = false;
     }
 
     public class Table
@@ -65,11 +58,11 @@
             {
                 var shoearray = Shoe.ToArray();
                 Random.Shared.Shuffle(shoearray);
-                Shoe = shoearray.ToList();
+                Shoe = [.. shoearray];
             }
             else
             {
-                Shoe = Shoe.OrderBy(cardshuffle).ToList();
+                Shoe = [.. Shoe.OrderBy(cardshuffle)];
             }
         }
 
@@ -99,7 +92,7 @@
 
         public Card Hit()
         {
-            if (!Shoe.Any())
+            if (Shoe.Count == 0)
                 return null;
 
             var topcard = Shoe.First();

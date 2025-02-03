@@ -1,49 +1,48 @@
 ﻿using BJ;
 
-const decimal INITIALBANKROLL = 5000;
-const int ROUNDS = 10000;
-const int ROUNDSPERHOUR = 100;
+const decimal INITIALBANKROLL = 10000;
+const int ROUNDS = 40000;
+const int ROUNDSPERHOUR = 128;
 const int CONCURRENTPLAYERS = 1000;
-const int BETTINGUNIT = 10;
-const decimal DECKPEN = 0.7m;
+const int BETTINGUNIT = 1;
+const decimal DECKPEN = 0.70m;
 const int SHOESIZE = 2;
 const decimal BJPAYOUT = 1.5m;
+const int MAXHANDS = 4;
 
 Console.WriteLine("Barebones Blackjack Simulator!");
 
-decimal runningprofits = 0;
-int bankruptcount = 0;
-decimal maxprofit = 0;
 
 var rules = new BlackjackRules(SHOESIZE, DECKPEN)
 {
     IsSurrenderAllowed = false,
     BlackjackPayout = BJPAYOUT,
-    DealerPeeksForBlackjack = true, //NOT IMPLEMENTED ALWAYS CONSIDERED TRUE
-    DAS = true, //NOT IMPLEMENTED. ALWAYS CONSIDERED TRUE
+    DAS = true,
     CanHitAcesAfterSplit = false,
     DealerHitsSoft17 = true,
-    PairSplitLimit = 3, //NOT IMPLEMENTED - PLAYER CAN SPLIT ANY HAND ANY NUMBER OF TIMES
-    SplitAcesLimit = 1  //NOT IMPLEMENTED - PLAYER CAN SPLIT ANY HAND ANY NUMBER OF TIMES
+    PairSplitLimit = MAXHANDS - 1,
+    CanResplitAces = false
 };
 
+List<decimal> profits = [];
+int bankruptcount = 0;
+decimal maxprofit = 0;
 Parallel.For(0, CONCURRENTPLAYERS, i =>
 {
     var table = new Table(rules);
     var player = new Player(
         INITIALBANKROLL,
-        new BettingStrategy(BettingStrategies.BuildBetSpread([0, 1, 1, 1, 2, 3, 4, 5, 6, 10]), [1, 1, 2]),
-        new PlayingStrategy(PlayingStrategies.BasicStrategy_HardHand_2D_H17, PlayingStrategies.BasicStrategy_SoftHand_2D_H17, PlayingStrategies.BasicStrategy_Pairs_2D_H17_DAS)
-        {
-            HardHandDeviations = PlayingStrategies.Deviations_HardHand_SD
-        }
+        //new BettingStrategy(BettingStrategies.BuildBetSpread([0, 0, 25], [25, 25, 50, 75, 125, 150, 200]), [1, 1, 2]),
+        new BettingStrategy(BettingStrategies.BuildBetSpread([0, 0, 0], [10, 10, 20, 30, 40, 50, 75]), [1, 2]),
+        new PlayingStrategy_4D().UseDeviations()
     );
 
     var bjplayer = new BJPlayer(table, player);
 
-    var bankroll = PlayBlackjack(bjplayer, BETTINGUNIT, ROUNDS);
-    var currentprofit = bankroll - INITIALBANKROLL;
-    runningprofits += currentprofit;
+    var currentbankroll = PlayBlackjack(bjplayer, BETTINGUNIT, ROUNDS);
+    var currentprofit = currentbankroll - INITIALBANKROLL;
+    profits.Add(currentprofit);
+
     if (currentprofit < -INITIALBANKROLL)
         bankruptcount++;
     else if (currentprofit > maxprofit)
@@ -52,17 +51,20 @@ Parallel.For(0, CONCURRENTPLAYERS, i =>
     Console.WriteLine($"Iteration {i} profits: ${currentprofit}.");
 });
 
+var averageprofit = profits.Average();
+var stddev = Math.Sqrt(profits.Average(p => Math.Pow((double)(p - averageprofit), 2)));
+Console.WriteLine($"Average profits: ${averageprofit:n2} over {ROUNDS * CONCURRENTPLAYERS:n0} rounds and {ROUNDS / ROUNDSPERHOUR} hours.");
+Console.WriteLine($"\tStandard Deviation: {stddev:n2}");
 
-var averageprofit = runningprofits / CONCURRENTPLAYERS;
-Console.WriteLine($"Average profits: ${averageprofit} over {ROUNDS * CONCURRENTPLAYERS} rounds.");
-Console.WriteLine($"Average profit/hour: ${averageprofit / ROUNDSPERHOUR}");
+
+Console.WriteLine($"Average profit/hour: ${averageprofit / ROUNDS * ROUNDSPERHOUR}");
 Console.WriteLine($"Bankruptices: {bankruptcount} for a {bankruptcount * 100 / (decimal)CONCURRENTPLAYERS}% RoR.");
 Console.WriteLine($"Max profit: ${maxprofit}");
 
 Console.WriteLine("Press any key to end.");
 Console.ReadKey();
 
-decimal PlayBlackjack(BJPlayer bjplayer, int bettingunit, int rounds)
+static decimal PlayBlackjack(BJPlayer bjplayer, int bettingunit, int rounds)
 {
     var player = bjplayer.Player;
     var bj = bjplayer.Table;
@@ -72,15 +74,15 @@ decimal PlayBlackjack(BJPlayer bjplayer, int bettingunit, int rounds)
         if (player.BankRoll < 0)
             return player.BankRoll;
 
-        var bet = player.BettingStrategy.GetBetAmountAndHands((int)bj.GetTrueCount(), bettingunit);
+        var (bet, hands) = player.GetBetAmount((int)bjplayer.Table.GetTrueCount());
 #if DEBUG
-        Console.WriteLine($"Betting ${bet.Bet} on {bet.Hands} hands.");
+        Console.WriteLine($"Betting ${bet} on {hands} hands.");
 #endif
 
-        player.AddHands(bet.Hands);
+        player.AddHands(hands);
 
         bj.Deal(player.Hands);
-        bjplayer.Play(bet.Bet);
+        bjplayer.Play(bet);
         bj.ClearHands(player);
         if (bj.DoReshuffleShoe())
         {
@@ -98,5 +100,3 @@ decimal PlayBlackjack(BJPlayer bjplayer, int bettingunit, int rounds)
 
     return player.BankRoll;
 }
-
-
