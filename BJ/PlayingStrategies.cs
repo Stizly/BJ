@@ -1,13 +1,13 @@
 ﻿namespace BJ
 {
-    public class PlayingStrategies
-    {
-        /// <summary>
-        /// Strategy from https://wizardofodds.com/games/blackjack/strategy/calculator/
-        /// 2 decks, Hit soft 17, DAS allowed, Surrender allowed, Dealer Peeks
-        /// </summary>
-        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_HardHand_2D_H17 =
-        [
+	public class PlayingStrategies
+	{
+		/// <summary>
+		/// Strategy from https://wizardofodds.com/games/blackjack/strategy/calculator/
+		/// 2 decks, Hit soft 17, DAS allowed, Surrender allowed, Dealer Peeks
+		/// </summary>
+		public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_HardHand_2D_H17 =
+		[
             //  2   3   4   5   6   7   8   9   10  A
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //4    4 is here in case I they cannot split a 4 for whatever reason.
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //5
@@ -28,8 +28,8 @@
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //20
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ]   //21
         ];
-        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_SoftHand_2D_H17 =
-        [
+		public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_SoftHand_2D_H17 =
+		[
             //  2   3   4   5   6   7   8   9   10  A
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //12 AA     ONLY IN CASE OF SPLIT ACES MULTIPLE TIMES TO LIMIT
             [   H,  H,  H,  Dh, Dh, H,  H,  H,  H,  H   ],  //13 A2
@@ -42,8 +42,8 @@
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //20 A9
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ]   //21 A10
         ];
-        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_Pairs_2D_H17_DAS =
-        [
+		public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_Pairs_2D_H17_DAS =
+		[
             //  2   3   4   5   6   7   8   9   10  A
             [   P,  P,  P,  P,  P,  P,  H,  H,  H,  H   ],   //2,2
             [   P,  P,  P,  P,  P,  P,  H,  H,  H,  H   ],   //3,3
@@ -57,12 +57,12 @@
             [   P,  P,  P,  P,  P,  P,  P,  P,  P,  P   ],   //A,A
         ];
 
-        /// <summary>
-        /// Strategy from https://wizardofodds.com/games/blackjack/strategy/calculator/
-        /// 4 or more decks, Hit soft 17, DAS allowed, Surrender allowed, Dealer Peeks
-        /// </summary>
-        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_HardHand_4D_H17 =
-        [
+		/// <summary>
+		/// Strategy from https://wizardofodds.com/games/blackjack/strategy/calculator/
+		/// 4 or more decks, Hit soft 17, DAS allowed, Surrender allowed, Dealer Peeks
+		/// </summary>
+		public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_HardHand_4D_H17 =
+		[
             //  2   3   4   5   6   7   8   9   10  A
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //4    4 is here in case I they cannot split a 4 for whatever reason.
             [   H,  H,  H,  H,  H,  H,  H,  H,  H,  H   ],  //5
@@ -83,8 +83,8 @@
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //20
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ]   //21
         ];
-        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_SoftHand_4D_H17 =
-        [
+		public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_SoftHand_4D_H17 =
+		[
             //  2   3   4   5   6   7   8   9   10  A
             [   H,  H,  H,  S,  S,  H,  H,  H,  H,  H   ],  //12 AA     ONLY IN CASE OF SPLIT ACES MULTIPLE TIMES TO LIMIT
             [   H,  H,  H,  Dh, Dh, H,  H,  H,  H,  H   ],  //13 A2
@@ -97,8 +97,8 @@
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ],  //20 A9
             [   S,  S,  S,  S,  S,  S,  S,  S,  S,  S   ]   //21 A10
         ];
-        public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_Pairs_4D_H17_DAS =
-        [
+		public static readonly Func<GameState, ActionEnum>[][] BasicStrategy_Pairs_4D_H17_DAS =
+		[
             //  2   3   4   5   6   7   8   9   10  A
             [   P,  P,  P,  P,  P,  P,  H,  H,  H,  H   ],   //2,2
             [   P,  P,  P,  P,  P,  P,  H,  H,  H,  H   ],   //3,3
@@ -112,11 +112,11 @@
             [   P,  P,  P,  P,  P,  P,  P,  P,  P,  P   ],   //A,A
         ];
 
-        public static readonly Func<GameState, ActionEnum>[][][] BasicStrategy_4D_H17_DAS = [BasicStrategy_HardHand_4D_H17, BasicStrategy_SoftHand_4D_H17, BasicStrategy_Pairs_4D_H17_DAS];
-        public static readonly Func<GameState, ActionEnum>[][][] BasicStrategy_2D_H17_DAS = [BasicStrategy_HardHand_2D_H17, BasicStrategy_SoftHand_2D_H17, BasicStrategy_Pairs_2D_H17_DAS];
+		public static readonly Func<GameState, ActionEnum>[][][] BasicStrategy_4D_H17_DAS = [BasicStrategy_HardHand_4D_H17, BasicStrategy_SoftHand_4D_H17, BasicStrategy_Pairs_4D_H17_DAS];
+		public static readonly Func<GameState, ActionEnum>[][][] BasicStrategy_2D_H17_DAS = [BasicStrategy_HardHand_2D_H17, BasicStrategy_SoftHand_2D_H17, BasicStrategy_Pairs_2D_H17_DAS];
 
-        public static readonly (int, Func<GameState, ActionEnum>)?[][] Deviations_HardHand_SD =
-        [
+		public static readonly (int, Func<GameState, ActionEnum>)?[][] Deviations_HardHand_SD =
+		[
             //  2       3       4       5       6       7       8       9       10      A
             [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //4
             [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //5
@@ -138,81 +138,96 @@
             [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //21
         ];
 
-        private static ActionEnum H(GameState gamestate) => ActionEnum.H;
-        private static ActionEnum Dh(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.H;
-        private static ActionEnum Ds(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.S;
-        private static ActionEnum S(GameState gamestate) => ActionEnum.S;
-        private static ActionEnum Rh(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.H;
-        private static ActionEnum Rs(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.S;
-        private static ActionEnum P(GameState gamestate) => ActionEnum.P;
-        private static ActionEnum Rp(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.P;
+		private static ActionEnum H(GameState gamestate) => ActionEnum.H;
+		private static ActionEnum Dh(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.H;
+		private static ActionEnum Ds(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.S;
+		private static ActionEnum S(GameState gamestate) => ActionEnum.S;
+		private static ActionEnum Rh(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.H;
+		private static ActionEnum Rs(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.S;
+		private static ActionEnum P(GameState gamestate) => ActionEnum.P;
+		private static ActionEnum Rp(GameState gamestate) => gamestate.CanSurrender() ? ActionEnum.R : ActionEnum.P;
 
-        //It is unclear if (0, H) means hit at or above 0, or hit at or below 0, so for 0-based deviations, use methods like this
-        private static (int, Func<GameState, ActionEnum>) Hlte0 => (0, (GameState gs) => gs.TrueCount <= 0 ? ActionEnum.H : ActionEnum.S);
-        private static (int, Func<GameState, ActionEnum>) Sgte0 => (0, (GameState gs) => gs.TrueCount >= 0 ? ActionEnum.S : ActionEnum.H);
-    }
+		//It is unclear if (0, H) means hit at or above 0, or hit at or below 0, so for 0-based deviations, use methods like this
+		private static (int, Func<GameState, ActionEnum>) Hlte0 => (0, (GameState gs) => gs.RunningCount < 0 ? ActionEnum.H : ActionEnum.S);
+		private static (int, Func<GameState, ActionEnum>) Sgte0 => (0, (GameState gs) => gs.RunningCount > 0 ? ActionEnum.S : ActionEnum.H);
+	}
 
-    public enum ActionEnum
-    {
-        H, D, S, R, P
-    }
+	public enum ActionEnum
+	{
+		H, D, S, R, P
+	}
 
-    public abstract class PlayingStrategy
-    {
-        public Func<GameState, ActionEnum>[][] HardHandStrategy { get; set; }
-        public Func<GameState, ActionEnum>[][] SoftHandStrategy { get; set; }
-        public Func<GameState, ActionEnum>[][] PairsStrategy { get; set; }
-        public (int AtTrueCount, Func<GameState, ActionEnum> Deviation)?[][] HardHandDeviations { get; set; }
+	public abstract class PlayingStrategy
+	{
+		public Func<GameState, ActionEnum>[][] HardHandStrategy { get; set; }
+		public Func<GameState, ActionEnum>[][] SoftHandStrategy { get; set; }
+		public Func<GameState, ActionEnum>[][] PairsStrategy { get; set; }
+		public (int AtTrueCount, Func<GameState, ActionEnum> Deviation)?[][] HardHandDeviations { get; set; }
+		public int? TakeInsuranceAtTrueCountDeviation { get; set; }
 
-        public PlayingStrategy(Func<GameState, ActionEnum>[][][] HardSoftPairStrategy)
-        {
-            HardHandStrategy = HardSoftPairStrategy[0];
-            SoftHandStrategy = HardSoftPairStrategy[1];
-            PairsStrategy = HardSoftPairStrategy[2];
-        }
+		public PlayingStrategy(Func<GameState, ActionEnum>[][][] HardSoftPairStrategy)
+		{
+			HardHandStrategy = HardSoftPairStrategy[0];
+			SoftHandStrategy = HardSoftPairStrategy[1];
+			PairsStrategy = HardSoftPairStrategy[2];
+		}
 
-        public PlayingStrategy UseDeviations()
-        {
-            HardHandDeviations = PlayingStrategies.Deviations_HardHand_SD;
-            return this;
-        }
+		public PlayingStrategy UseDeviations()
+		{
+			HardHandDeviations = PlayingStrategies.Deviations_HardHand_SD;
+			return this;
+		}
 
-        public ActionEnum GetAction(GameState gamestate)
-        {
-            var dealerupcardindex = GetDealerUpcardIndex(gamestate.DealerUpcard);
-            if (gamestate.CanSplit())
-            {
-                return PairsStrategy[GetSplitRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
-            }
-            else if (gamestate.PlayerHand.IsSoft)
-            {
-                return SoftHandStrategy[GetSoftHandRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
-            }
-            else
-            {
-                var rowindex = GetHardHandRowIndex(gamestate.PlayerHand);
-                var deviation = HardHandDeviations?[rowindex][dealerupcardindex];
+		public PlayingStrategy UseHardHandDeviation((int AtTrueCount, Func<GameState, ActionEnum> Deviation)?[][] harddeviation)
+		{
+			HardHandDeviations = harddeviation;
+			return this;
+		}
 
-                if (deviation != null && UseDeviation(deviation.Value.AtTrueCount, gamestate.TrueCount))
-                    return deviation.Value.Deviation(gamestate);
-                else
-                    return HardHandStrategy[rowindex][dealerupcardindex](gamestate);
-            }
-        }
+		public ActionEnum GetAction(GameState gamestate)
+		{
+			var dealerupcardindex = GetDealerUpcardIndex(gamestate.DealerUpcard);
+			if (gamestate.CanSplit())
+			{
+				return PairsStrategy[GetSplitRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
+			}
+			else if (gamestate.PlayerHand.IsSoft)
+			{
+				return SoftHandStrategy[GetSoftHandRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
+			}
+			else
+			{
+				var rowindex = GetHardHandRowIndex(gamestate.PlayerHand);
+				var deviation = HardHandDeviations?[rowindex][dealerupcardindex];
 
-        private static int GetDealerUpcardIndex(Card upcard) => upcard.Rank == "A" ? 9 : upcard.Value - 2;
-        private static int GetSplitRowIndex(IHand hand) => hand.Cards[0].Rank == "A" ? 9 : hand.Cards[0].Value - 2;
-        private static int GetSoftHandRowIndex(IHand hand) => hand.Value - 12;
-        private static int GetHardHandRowIndex(IHand hand) => hand.Value - 4;
-        private bool UseDeviation(int attruecount, int truecount) => attruecount == 0 || (attruecount < 0 && truecount <= attruecount) || (attruecount > 0 && truecount >= attruecount);
-    }
+				if (deviation != null && UseDeviation(deviation.Value.AtTrueCount, gamestate.TrueCount))
+					return deviation.Value.Deviation(gamestate);
+				else
+					return HardHandStrategy[rowindex][dealerupcardindex](gamestate);
+			}
+		}
 
-    public class PlayingStrategy_2D : PlayingStrategy
-    {
-        public PlayingStrategy_2D() : base(PlayingStrategies.BasicStrategy_2D_H17_DAS) { }
-    }
-    public class PlayingStrategy_4D : PlayingStrategy
-    {
-        public PlayingStrategy_4D() : base(PlayingStrategies.BasicStrategy_4D_H17_DAS) { }
-    }
+		public bool DoTakeInsurrance(GameState gamestate)
+		{
+			if (TakeInsuranceAtTrueCountDeviation == null)
+				return false;
+
+			return gamestate.TrueCount >= TakeInsuranceAtTrueCountDeviation;
+		}
+
+		private static int GetDealerUpcardIndex(Card upcard) => upcard.Rank == "A" ? 9 : upcard.Value - 2;
+		private static int GetSplitRowIndex(IHand hand) => hand.Cards[0].Rank == "A" ? 9 : hand.Cards[0].Value - 2;
+		private static int GetSoftHandRowIndex(IHand hand) => hand.Value - 12;
+		private static int GetHardHandRowIndex(IHand hand) => hand.Value - 4;
+		private bool UseDeviation(int attruecount, int truecount) => attruecount == 0 || (attruecount < 0 && truecount <= attruecount) || (attruecount > 0 && truecount >= attruecount);
+	}
+
+	public class PlayingStrategy_2D : PlayingStrategy
+	{
+		public PlayingStrategy_2D() : base(PlayingStrategies.BasicStrategy_2D_H17_DAS) { }
+	}
+	public class PlayingStrategy_4D : PlayingStrategy
+	{
+		public PlayingStrategy_4D() : base(PlayingStrategies.BasicStrategy_4D_H17_DAS) { }
+	}
 }
