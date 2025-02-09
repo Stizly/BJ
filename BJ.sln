@@ -10,6 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BJTesting", "BJTesting\BJTe
 		{4808B1AE-3D70-4857-BB3E-2DE942244239} = {4808B1AE-3D70-4857-BB3E-2DE942244239}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BJ_Blazor", "BJ_Blazor\BJ_Blazor\BJ_Blazor.csproj", "{BB89D516-F214-45EB-A327-A10490FB54E4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4808B1AE-3D70-4857-BB3E-2DE942244239} = {4808B1AE-3D70-4857-BB3E-2DE942244239}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +29,10 @@ Global
 		{EC4D614D-7BA5-40B3-A51D-8616E53DC6DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC4D614D-7BA5-40B3-A51D-8616E53DC6DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC4D614D-7BA5-40B3-A51D-8616E53DC6DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB89D516-F214-45EB-A327-A10490FB54E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB89D516-F214-45EB-A327-A10490FB54E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB89D516-F214-45EB-A327-A10490FB54E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB89D516-F214-45EB-A327-A10490FB54E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
