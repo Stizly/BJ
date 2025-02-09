@@ -1,0 +1,275 @@
+﻿@page "/"
+@using BJ_Blazor.Models
+@using BJ_Blazor.Services
+@inject BlackjackService _blackjack
+
+<PageTitle>Home</PageTitle>
+
+<h1>Blackjack Setup</h1>
+
+<EditForm Model="Model" OnValidSubmit="OnSubmit" >
+    <div class="container ms-1 mt-4">
+        <div class="row">
+            <div class="col-5">
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Bankroll:</label>
+                    </div>
+                    <div class="col-4">
+                        <CurrencyInput @bind-Value="Model.Bankroll" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Bet Unit:</label>
+                    </div>
+                    <div class="col-4">
+                        <CurrencyInput @bind-Value="Model.BetUnit" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Rounds per hour:</label>
+                    </div>
+                    <div class="col-4">
+                        <NumberInput @bind-Value="Model.RoundsPerHour" />
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-6">
+                        <label>Use Illustrious 18:</label>
+                    </div>
+                    <div class="col">
+                        <Switch @bind-Value="Model.UseIllustrious18" />
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <label class="mt-2">Bet spread preset:</label>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <Button class="btn btn-primary btn-sm w-100" @onclick="() => UsePreset(10, 1)">1-10 (1 hand)</Button>
+                    </div>
+                    <div class="col">
+                        <Button class="btn btn-primary btn-sm w-100" @onclick="() => UsePreset(10, 2)">1-10 (2 hands)</Button>
+                    </div>
+                    <div class="col">
+                        <Button class="btn btn-primary btn-sm w-100" @onclick="() => UsePreset(12, 1)">1-12 (1 hand)</Button>
+                    </div>
+                    <div class="col">
+                        <Button class="btn btn-primary btn-sm w-100" @onclick="() => UsePreset(12, 2)">1-12 (2 hands)</Button>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-3">
+                        <Button class="btn btn-primary btn-sm w-100" @onclick="() => FlatBet(1)">Flat Bet (1)</Button>
+                    </div>
+                    <div class="col-3">
+                        <Button class="btn btn-primary btn-sm w-100" @onclick="() => FlatBet(2)">Flat Bet (2)</Button>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">ShoeSize:</label>
+                    </div>
+                    <div class="col-4">
+                        <NumberInput @bind-Value="Model.ShoeSize" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Deck Penetration:</label>
+                    </div>
+                    <div class="col-4">
+                        <NumberInput Step="0.1" TValue="decimal" @bind-Value="Model.DeckPenetration" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Blackjack Payout:</label>
+                    </div>
+                    <div class="col-4">
+                        <NumberInput Step="0.1" TValue="decimal" @bind-Value="Model.BlackjackPayout" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Max Pair Splits:</label>
+                    </div>
+                    <div class="col-4">
+                        <NumberInput @bind-Value="Model.PairSplitLimits" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label>DAS:</label>
+                    </div>
+                    <div class="col-4">
+                        <Switch @bind-Value="Model.DAS" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label>Allow Surrender:</label>
+                    </div>
+                    <div class="col-4">
+                        <Switch @bind-Value="Model.IsSurrenderAllowed" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label>Can Resplit Aces:</label>
+                    </div>
+                    <div class="col-4">
+                        <Switch @bind-Value="Model.CanResplitAces" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label>Dealer Hits Soft 17:</label>
+                    </div>
+                    <div class="col-4">
+                        <Switch @bind-Value="Model.DealerHitsSoft17" />
+                    </div>
+                </div>
+                <hr/>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Simulated Players:</label>
+                    </div>
+                    <div class="col-4">
+                        <NumberInput @bind-Value="Model.SimulatedPlayers" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="mt-2">Simulated Rounds:</label>
+                    </div>
+                    <div class="col-4">
+                        <NumberInput @bind-Value="Model.RoundsPerPlayerSimulated" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 ms-2">
+                @{
+                    int i = -3;
+                }
+                @foreach (var betandhand in Model.BetAndHands) {
+                    <div class="row mb-4">
+                        <div class="col-2 pt-1">
+                            <label>TC @(i++)</label>
+                        </div>
+                        <div class="col-4">
+                            <CurrencyInput @bind-Value="betandhand.Bet" />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput @bind-Value="betandhand.Hands" EnableMinMax="true" Min="1" Max="4" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col">
+                <button disabled="@IsLoading" class="btn btn-primary" type="submit" @onclick="() => { IsLoading = true; }">@SimulateButtonText</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+<h1>Results</h1>
+@foreach(var result in Results.OrderByDescending(r => r.Iteration)){
+    <h4>Simulation @result.Iteration</h4>
+    <p><b>Total Rounds:</b> @(result.TotalRounds.ToString("n0"))</p>
+    <p><b>Bet Spread:</b> @result.BetSpread</p>
+    <p><b>Max Profits:</b> $@result.MaxProfit.ToString("n2")</p>
+    <p><b>Average Profits:</b> $@result.AverageProfit.ToString("n2")</p>
+    <p><b>Std Deviation:</b> $@result.StandardDeviation.ToString("n2")</p>
+    <p><b>Average Profits Per Hour:</b> $@result.ProfitPerHour.ToString("n2")</p>
+    <p><b>Risk of Ruin:</b> @(result.RiskOfRuin.ToString("n2"))%</p>
+    <hr/>
+}
+
+@code {
+
+    private BlackjackSetupDTO Model { get; set; }
+    private const int BetArraySize = 11;
+    private const int MaxBetAtTC = 5;
+    private bool IsLoading = false;
+    private string SimulateButtonText => IsLoading ? "Loading..." : "Simulate!";
+    private List<BlackjackResult> Results { get; set; }
+    private int SimulationIteration { get; set; } = 0;
+
+    protected override void OnInitialized()
+    {
+        Results = new();
+        Model = new()
+        {
+            ShoeSize=2,
+            DeckPenetration = 0.7m,
+
+            BetAndHands = Enumerable.Range(1, BetArraySize).Select(bh => new BetAndHandCount { Bet = 0m, Hands=1}).ToList(),
+            BetUnit = 10m,
+            Bankroll = 10000m,
+            BlackjackPayout = 1.5m,
+            RoundsPerHour = 100,
+            SimulatedPlayers = 1000,
+            RoundsPerPlayerSimulated = 1000,
+            PairSplitLimits = 3,
+            UseIllustrious18 = true
+        };
+        UsePreset(10, 2);
+    }
+
+    private void UsePreset(int spread, int hands)
+    {
+        //i=0 => TC -3,
+        //i=3 => TC 0,
+        //i=4 => TC 1,
+        //i=8 => TC 5
+        //i=10 => TC 7
+        for(int i=0; i<BetArraySize; i++){
+            var betandhands = Model.BetAndHands[i];
+            if(i<2){
+                betandhands.Hands = 1;
+                betandhands.Bet = 0m;
+            }
+            else if(i <= 4){
+                betandhands.Bet = Model.BetUnit;
+                betandhands.Hands = 1;
+            }
+            else if(i <= 8)
+            {
+                //at TC 1, bet 1 unit, at TC 5 bet spread hands
+                var betpertc = Model.BetUnit;
+                var tc = i - 3;
+                betandhands.Bet = (betpertc*tc*spread) / MaxBetAtTC / (decimal)hands;
+                betandhands.Hands = hands;
+            }
+            else
+            {
+                betandhands.Bet = spread * Model.BetUnit / hands;
+                betandhands.Hands = hands;
+            }
+        }
+    }
+
+    private void FlatBet(int hands){
+        foreach (var bh in Model.BetAndHands){
+            bh.Bet = Model.BetUnit;
+            bh.Hands = hands;
+        }
+    }
+
+    private void OnSubmit()
+    {
+        var setupdto = Model.Copy();
+        var result = _blackjack.SimulateBlackjack(setupdto);
+        result.Iteration = SimulationIteration++;
+        Results.Add(result);
+        IsLoading = false;
+    }
+}
