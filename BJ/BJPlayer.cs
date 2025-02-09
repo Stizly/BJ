@@ -13,14 +13,14 @@
 			List<HandAndResult> undecidedhands = [];
 			List<HandAndResult> decidedhands = [];
 #if DEBUG
-            Console.WriteLine($"Dealer's upcard is {upcard.Rank}.");
+			Console.WriteLine($"Dealer's upcard is {upcard.Rank}.");
 #endif
 
 			ProcessHands(bet, Player.Hands, upcard, undecidedhands, decidedhands);
 			ProcessResolvedHands(decidedhands);
 
 #if DEBUG
-            Console.WriteLine($"Dealer's downcard is {Table.DealerDowncard.Rank}");
+			Console.WriteLine($"Dealer's downcard is {Table.DealerDowncard.Rank}");
 #endif
 			FinishDealerDrawing();
 			ResolveRemainingHands(undecidedhands);
@@ -31,7 +31,7 @@
 			foreach (Hand hand in hands)
 			{
 #if DEBUG
-                Console.WriteLine($"Your cards are {string.Join(", ", hand.Cards.Select(c => c.Rank))}.");
+				Console.WriteLine($"Your cards are {string.Join(", ", hand.Cards.Select(c => c.Rank))}.");
 #endif
 				GameState gs = new()
 				{
@@ -39,8 +39,24 @@
 					PlayerHand = hand,
 					Rules = Table.Rules,
 					RunningCount = Table.RunningCount,
-					TrueCount = (int)Table.GetTrueCount()
+					TrueCount = Table.GetTrueCount()
 				};
+
+				if (Table.DealerUpcard.Rank == "A" && Player.PlayingStrategy.DoTakeInsurrance(gs))
+				{
+					//take insurance
+					if (Table.DealerHand.IsBlackjack)
+					{
+						//get your full bet value back if you win
+						decidedhands.Add(new HandAndResult() { Hand = hand, Payout = bet, Message = "You took insurance and the dealer had Blackjack!" });
+					}
+					else
+					{
+						//lose half your bet if you lose
+						decidedhands.Add(new HandAndResult() { Hand = hand, Payout = bet / 2, Message = "You took insurance and the dealer did not have Blackjack!" });
+					}
+				}
+
 				//if you both get blackjack
 				if (Table.DealerHand.IsBlackjack && hand.IsBlackjack)
 				{
@@ -115,7 +131,7 @@
 			{
 				Player.BankRoll += result.Payout;
 #if DEBUG
-                Console.WriteLine(result.Message);
+				Console.WriteLine(result.Message);
 #endif
 			}
 		}
@@ -126,7 +142,7 @@
 				var hitcard = Table.Hit();
 				Table.DealerHand.AddCard(hitcard);
 #if DEBUG
-                Console.WriteLine($"The dealer drew a {hitcard.Rank} for a total of {Table.DealerHand.Value}.");
+				Console.WriteLine($"The dealer drew a {hitcard.Rank} for a total of {Table.DealerHand.Value}.");
 #endif
 			}
 		}
@@ -137,21 +153,21 @@
 				if (result.Hand.Value == Table.DealerHand.Value)
 				{
 #if DEBUG
-                    Console.WriteLine($"Hand pushed with {result.Hand.Value}.");
+					Console.WriteLine($"Hand pushed with {result.Hand.Value}.");
 #endif
 				}
 
 				else if (result.Hand.Value > Table.DealerHand.Value || Table.DealerHand.IsBusted)
 				{
 #if DEBUG
-                    Console.WriteLine($"Your {result.Hand.Value} beat the dealer's {Table.DealerHand.Value}. You win {result.Payout}!");
+					Console.WriteLine($"Your {result.Hand.Value} beat the dealer's {Table.DealerHand.Value}. You win {result.Payout}!");
 #endif
 					Player.BankRoll += result.Payout;
 				}
 				else
 				{
 #if DEBUG
-                    Console.WriteLine($"The dealers {Table.DealerHand.Value} beat your {result.Hand.Value}. You lose {result.Payout}.");
+					Console.WriteLine($"The dealers {Table.DealerHand.Value} beat your {result.Hand.Value}. You lose {result.Payout}.");
 #endif
 					Player.BankRoll -= result.Payout;
 				}

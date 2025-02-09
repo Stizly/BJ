@@ -144,7 +144,7 @@ namespace BJTesting
 		}
 
 		[TestMethod]
-		public void DeviatedStrategy_IsCorrect()
+		public void DeviatedStrategy_IsCorrectForHardHand()
 		{
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 4, [Card.RANKS], [ActionEnum.H]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 5, [Card.RANKS], [ActionEnum.H]));
@@ -165,6 +165,28 @@ namespace BJTesting
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 19, [Card.RANKS], [ActionEnum.S]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 20, [Card.RANKS], [ActionEnum.S]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 21, [Card.RANKS], [ActionEnum.S]));
+		}
+
+		[TestMethod]
+		public void DeviatedStrategy_IsCorrectForPairs()
+		{
+			var rules = new BlackjackRules(2, 0.7m)
+			{
+				IsSurrenderAllowed = true,
+				CanResplitAces = true,
+			};
+
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(4) { Cards = [new("2"), new("2")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "7"], ["8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.P, ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(6) { Cards = [new("3"), new("3")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "7"], ["8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.P, ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(8) { Cards = [new("4"), new("4")], CanSplit = true, IsNewHand = true }, [["2", "3", "4"], ["5", "6"], ["7", "8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.H, ActionEnum.P, ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(10) { Cards = [new("5"), new("5")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "7", "8", "9"], ["10", "J", "Q", "K", "A"]], [ActionEnum.D, ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(12) { Cards = [new("6"), new("6")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "7"], ["8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.P, ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(14) { Cards = [new("7"), new("7")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "7", "8"], ["9", "10", "J", "Q", "K", "A"]], [ActionEnum.P, ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(16) { Cards = [new("8"), new("8")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"], ["A"]], [ActionEnum.P, ActionEnum.R]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(18) { Cards = [new("9"), new("9")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "8", "9"], ["7", "10", "J", "Q", "K", "A"]], [ActionEnum.P, ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(20) { Cards = [new("10"), new("10")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "7", "8", "9", "10", "A"], ["6"]], [ActionEnum.S, ActionEnum.P], tc: 4));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new TestHand(20) { Cards = [new("10"), new("10")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "7", "8", "9", "10", "A"], ["5", "6"]], [ActionEnum.S, ActionEnum.P], tc: 5));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new GameState { Rules = rules, PlayerHand = new TestHand(12) { Cards = [new("A"), new("A")], CanSplit = true, IsNewHand = true } }, [Card.RANKS], [ActionEnum.P]));
 		}
 
 		[TestMethod]
@@ -260,6 +282,24 @@ namespace BJTesting
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, new TestHand(18) { Cards = [new("9"), new("9")], CanSplit = true, IsNewHand = true }, [["2", "3", "4", "5", "6", "8", "9"], ["7", "10", "J", "Q", "K", "A"]], [ActionEnum.P, ActionEnum.S]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, new TestHand(20) { Cards = [new("10"), new("10")], CanSplit = true, IsNewHand = true }, [Card.RANKS], [ActionEnum.S]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, new GameState { Rules = rules, PlayerHand = new TestHand(12) { Cards = [new("A"), new("A")], CanSplit = true, IsNewHand = true } }, [Card.RANKS], [ActionEnum.P]));
+		}
+
+		[TestMethod]
+		public void TakeInsurance_IsCorrectForBasicStrategy()
+		{
+			GameState gamestate = new GameState { TrueCount = 0 };
+			Assert.IsFalse(BASICSTRATEGY_2D.DoTakeInsurrance(gamestate));
+			gamestate.TrueCount = 3;
+			Assert.IsFalse(BASICSTRATEGY_2D.DoTakeInsurrance(gamestate));
+		}
+
+		[TestMethod]
+		public void TakeInsurance_IsCorrectForDeviatedStrategy()
+		{
+			GameState gamestate = new GameState { TrueCount = 0 };
+			Assert.IsFalse(BASICSTRATEGY_2D_WITHDEVIATIONS.DoTakeInsurrance(gamestate));
+			gamestate.TrueCount = 3;
+			Assert.IsTrue(BASICSTRATEGY_2D_WITHDEVIATIONS.DoTakeInsurrance(gamestate));
 		}
 	}
 }

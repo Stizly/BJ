@@ -52,7 +52,7 @@ namespace BJ_Blazor.Services
 				if (player.BankRoll < 0)
 					return player.BankRoll;
 
-				var (bet, hands) = player.GetBetAmount((int)bjplayer.Table.GetTrueCount());
+				var (bet, hands) = player.GetBetAmount(bjplayer.Table.GetTrueCount());
 				player.AddHands(hands);
 
 				bj.Deal(player.Hands);
