@@ -115,7 +115,7 @@
 		public static readonly Func<GameState, ActionEnum>[][][] BasicStrategy_4D_H17_DAS = [BasicStrategy_HardHand_4D_H17, BasicStrategy_SoftHand_4D_H17, BasicStrategy_Pairs_4D_H17_DAS];
 		public static readonly Func<GameState, ActionEnum>[][][] BasicStrategy_2D_H17_DAS = [BasicStrategy_HardHand_2D_H17, BasicStrategy_SoftHand_2D_H17, BasicStrategy_Pairs_2D_H17_DAS];
 
-		public static readonly (int, Func<GameState, ActionEnum>)?[][] Deviations_HardHand_SD =
+		public static readonly (int, Func<GameState, ActionEnum>)?[][] Deviations_HardHand =
 		[
             //  2       3       4       5       6       7       8       9       10      A
             [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //4
@@ -137,6 +137,23 @@
             [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //20
             [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //21
         ];
+
+		public static readonly (int, Func<GameState, ActionEnum>)?[][] Deviations_Pairs =
+		[
+            //  2       3       4       5       6       7       8       9       10      A
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //2,2
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //3,3
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //4,4
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //5,5
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //6,6
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //7,7
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //8,8
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //9,9
+            [   null,   null,   null,   (+5,P), (+4,P), null,   null,   null,   null,   null    ],  //10,10
+            [   null,   null,   null,   null,   null,   null,   null,   null,   null,   null    ],  //A,A
+        ];
+
+		public static bool TakeInsuranceDeviation(GameState gamestate) => gamestate.TrueCount >= 3;
 
 		private static ActionEnum H(GameState gamestate) => ActionEnum.H;
 		private static ActionEnum Dh(GameState gamestate) => gamestate.CanDoubleDown() ? ActionEnum.D : ActionEnum.H;
@@ -163,7 +180,8 @@
 		public Func<GameState, ActionEnum>[][] SoftHandStrategy { get; set; }
 		public Func<GameState, ActionEnum>[][] PairsStrategy { get; set; }
 		public (int AtTrueCount, Func<GameState, ActionEnum> Deviation)?[][] HardHandDeviations { get; set; }
-		public int? TakeInsuranceAtTrueCountDeviation { get; set; }
+		public (int AtTrueCount, Func<GameState, ActionEnum> Deviation)?[][] PairsDeviations { get; set; }
+		public Func<GameState, bool>? InsuranceDeviation { get; set; }
 
 		public PlayingStrategy(Func<GameState, ActionEnum>[][][] HardSoftPairStrategy)
 		{
@@ -174,13 +192,9 @@
 
 		public PlayingStrategy UseDeviations()
 		{
-			HardHandDeviations = PlayingStrategies.Deviations_HardHand_SD;
-			return this;
-		}
-
-		public PlayingStrategy UseHardHandDeviation((int AtTrueCount, Func<GameState, ActionEnum> Deviation)?[][] harddeviation)
-		{
-			HardHandDeviations = harddeviation;
+			HardHandDeviations = PlayingStrategies.Deviations_HardHand;
+			PairsDeviations = PlayingStrategies.Deviations_Pairs;
+			InsuranceDeviation = PlayingStrategies.TakeInsuranceDeviation;
 			return this;
 		}
 
@@ -189,7 +203,12 @@
 			var dealerupcardindex = GetDealerUpcardIndex(gamestate.DealerUpcard);
 			if (gamestate.CanSplit())
 			{
-				return PairsStrategy[GetSplitRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
+				var rowindex = GetSplitRowIndex(gamestate.PlayerHand);
+				var deviation = PairsDeviations?[rowindex][dealerupcardindex];
+				if (deviation != null && UseDeviation(deviation.Value.AtTrueCount, gamestate.TrueCount))
+					return deviation.Value.Deviation(gamestate);
+				else
+					return PairsStrategy[GetSplitRowIndex(gamestate.PlayerHand)][dealerupcardindex](gamestate);
 			}
 			else if (gamestate.PlayerHand.IsSoft)
 			{
@@ -209,17 +228,17 @@
 
 		public bool DoTakeInsurrance(GameState gamestate)
 		{
-			if (TakeInsuranceAtTrueCountDeviation == null)
+			if (InsuranceDeviation == null)
 				return false;
 
-			return gamestate.TrueCount >= TakeInsuranceAtTrueCountDeviation;
+			return InsuranceDeviation(gamestate);
 		}
 
 		private static int GetDealerUpcardIndex(Card upcard) => upcard.Rank == "A" ? 9 : upcard.Value - 2;
 		private static int GetSplitRowIndex(IHand hand) => hand.Cards[0].Rank == "A" ? 9 : hand.Cards[0].Value - 2;
 		private static int GetSoftHandRowIndex(IHand hand) => hand.Value - 12;
 		private static int GetHardHandRowIndex(IHand hand) => hand.Value - 4;
-		private bool UseDeviation(int attruecount, int truecount) => attruecount == 0 || (attruecount < 0 && truecount <= attruecount) || (attruecount > 0 && truecount >= attruecount);
+		private static bool UseDeviation(int attruecount, int truecount) => attruecount == 0 || (attruecount < 0 && truecount <= attruecount) || (attruecount > 0 && truecount >= attruecount);
 	}
 
 	public class PlayingStrategy_2D : PlayingStrategy
