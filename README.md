@@ -17,3 +17,4 @@ Some limitations include:
 - No single deck strategy; it will default to double deck.
 - Strategy assumes H17, selecting an S17 game will play using H17 basic strategy.
 - All calculations are done by performing simulations.
+- Illustrious 18 does not include pairs (yet!)
