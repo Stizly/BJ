@@ -5,9 +5,9 @@ namespace BJTesting
 	[TestClass]
 	public class BJTesting
 	{
-		private readonly static Table BJTABLE1 = new Table(new BlackjackRules(1, 0.75m));
-		private readonly static Table BJTABLE2 = new Table(new BlackjackRules(2, 0.75m));
-		private readonly static Table BJTABLE4 = new Table(new BlackjackRules(4, 0.75m));
+		private readonly static Table BJTABLE1 = new Table(new BlackjackRules(1, 75));
+		private readonly static Table BJTABLE2 = new Table(new BlackjackRules(2, 75));
+		private readonly static Table BJTABLE4 = new Table(new BlackjackRules(4, 75));
 		[TestMethod]
 		public void Shoe_IsCorrectSize()
 		{
@@ -31,7 +31,7 @@ namespace BJTesting
 		[TestMethod]
 		public void RunningCount_UpdatesCorrectly()
 		{
-			var bj2 = new Table(new BlackjackRules(2, 0.75m));
+			var bj2 = new Table(new BlackjackRules(2, 75));
 			bj2.ShuffleShoe(c => c.Value);
 			for (int i = 0; i < 4; i++)
 			{
@@ -45,10 +45,9 @@ namespace BJTesting
 		[TestMethod]
 		public void RefillShoe_IsCorrect()
 		{
-			var bj1_dontreshuffle = new Table(new BlackjackRules(1, 0.7m));
-			var bj1_doreshuffle = new Table(new BlackjackRules(1, 0.7m));
-			var bj6_doreshuffle = new Table(new BlackjackRules(6, 0.8m));
-
+			var bj1_dontreshuffle = new Table(new BlackjackRules(1, 70));
+			var bj1_doreshuffle = new Table(new BlackjackRules(1, 70));
+			var bj6_doreshuffle = new Table(new BlackjackRules(6, 80));
 
 			for (int i = 0; i < 52 / 2; i++)
 			{

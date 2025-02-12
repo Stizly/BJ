@@ -81,10 +81,10 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-6">
-                        <label class="mt-2">Deck Penetration:</label>
+                        <label class="mt-2">Deck Penetration %:</label>
                     </div>
                     <div class="col-4">
-                        <NumberInput Step="0.1" TValue="decimal" @bind-Value="Model.DeckPenetration" />
+                        <NumberInput @bind-Value="Model.DeckPenetration" EnableMinMax="true" Min="1" Max="100" />
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -129,12 +129,20 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-6">
+                        <label>Can Hit Aces After Split:</label>
+                    </div>
+                    <div class="col-4">
+                        <Switch @bind-Value="Model.CanHitAcesAfterSplit" />
+                    </div>
+                </div>
+                @* <div class="row mb-4">
+                    <div class="col-6">
                         <label>Dealer Hits Soft 17:</label>
                     </div>
                     <div class="col-4">
                         <Switch @bind-Value="Model.DealerHitsSoft17" />
                     </div>
-                </div>
+                </div> *@
                 <hr/>
                 <div class="row mb-4">
                     <div class="col-6">
@@ -174,7 +182,7 @@
         </div>
         <div class="row mb-4">
             <div class="col">
-                <button disabled="@IsLoading" class="btn btn-primary" type="submit" @onclick="() => { IsLoading = true; }">@SimulateButtonText</button>
+                <button disabled="@IsLoading" class="btn btn-primary" type="submit" @onclick="() => { IsLoading = true; }"><div class="spinner-border spinner-border-sm text-white me-2" role="status" hidden="@(!IsLoading)"></div>@SimulateButtonText</button>
             </div>
         </div>
     </div>
@@ -182,13 +190,14 @@
 
 <h1>Results</h1>
 @foreach(var result in Results.OrderByDescending(r => r.Iteration)){
-    <h4>Simulation @result.Iteration</h4>
-    <p><b>Total Rounds:</b> @(result.TotalRounds.ToString("n0"))</p>
+    <h4>Simulation @(result.Iteration): @result.SetupDTO.ShoeSize Decks @(result.SetupDTO.DeckPenetration)% Penetration</h4>
+    <p><b>Rules:</b> @(result.GetRulesList())</p>
     <p><b>Bet Spread:</b> @result.BetSpread</p>
-    <p><b>Max Profits:</b> $@result.MaxProfit.ToString("n2")</p>
+    <p><b>Total Rounds:</b> @(result.TotalRounds.ToString("n0"))</p>
     <p><b>Average Profits:</b> $@result.AverageProfit.ToString("n2")</p>
-    <p><b>Std Deviation:</b> $@result.StandardDeviation.ToString("n2")</p>
     <p><b>Average Profits Per Hour:</b> $@result.ProfitPerHour.ToString("n2")</p>
+    <p><b>Max Profits:</b> $@result.MaxProfit.ToString("n2")</p>
+    <p><b>Std Deviation:</b> $@result.StandardDeviation.ToString("n2")</p>
     <p><b>Risk of Ruin:</b> @(result.RiskOfRuin.ToString("n2"))%</p>
     <hr/>
 }
@@ -208,8 +217,8 @@
         Results = new();
         Model = new()
         {
-            ShoeSize=2,
-            DeckPenetration = 0.7m,
+            ShoeSize=6,
+            DeckPenetration = 75,
 
             BetAndHands = Enumerable.Range(1, BetArraySize).Select(bh => new BetAndHandCount { Bet = 0m, Hands=1}).ToList(),
             BetUnit = 10m,

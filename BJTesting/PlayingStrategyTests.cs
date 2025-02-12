@@ -1,13 +1,14 @@
 ﻿using BJ;
+using BJ.PlayingStrategies;
 
 namespace BJTesting
 {
 	[TestClass]
 	public class PlayingStrategyTests
 	{
-		private static readonly PlayingStrategy BASICSTRATEGY_2D = new PlayingStrategy_2D();
-		private static readonly PlayingStrategy BASICSTRATEGY_2D_WITHDEVIATIONS = new PlayingStrategy_2D().UseDeviations();
-		private static readonly PlayingStrategy BASICSTRATEGY_4D = new PlayingStrategy_4D();
+		private static readonly PlayingStrategy BASICSTRATEGY_2D = new PlayingStrategy_DD_H17();
+		private static readonly PlayingStrategy BASICSTRATEGY_2D_WITHDEVIATIONS = new PlayingStrategy_DD_H17().UseDeviations();
+		private static readonly PlayingStrategy BASICSTRATEGY_4D = new PlayingStrategy_Shoe_H17();
 
 		[TestMethod]
 		public void BasicStrategy_IsCorrectForFreshHardHands()
@@ -50,7 +51,7 @@ namespace BJTesting
 			GameState gamestate = new()
 			{
 				PlayerHand = hand,
-				Rules = new BlackjackRules(2, 0.7m) { IsSurrenderAllowed = issurrenderallowed },
+				Rules = new BlackjackRules(2, 70) { IsSurrenderAllowed = issurrenderallowed },
 				TrueCount = tc
 			};
 			return TestRowResult(strategy, gamestate, dealerupcards, expectedaction);
@@ -93,7 +94,7 @@ namespace BJTesting
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 15, [Card.RANKS], [ActionEnum.H], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 16, [Card.RANKS], [ActionEnum.H], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 17, [Card.RANKS], [ActionEnum.H], issoft: true, isnew: false, hits: 1));
-			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 18, [["2", "3", "4", "5", "6"], ["7", "8"], ["9", "10", "J", "Q", "K", "A"]], [ActionEnum.H, ActionEnum.S, ActionEnum.H], issoft: true, isnew: false, hits: 1));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 18, [["2", "3", "4", "5", "6", "7", "8"], ["9", "10", "J", "Q", "K", "A"]], [ActionEnum.S, ActionEnum.H], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 19, [Card.RANKS], [ActionEnum.S], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 20, [Card.RANKS], [ActionEnum.S], issoft: true, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D, 21, [Card.RANKS], [ActionEnum.S], issoft: true, hits: 1));
@@ -125,7 +126,7 @@ namespace BJTesting
 		[TestMethod]
 		public void BasicStrategy_IsCorrectForSplits()
 		{
-			var rules = new BlackjackRules(2, 0.7m)
+			var rules = new BlackjackRules(2, 70)
 			{
 				IsSurrenderAllowed = true,
 				CanResplitAces = true,
@@ -155,11 +156,11 @@ namespace BJTesting
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 10, [["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.D, ActionEnum.H], tc: 4));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 11, [Card.RANKS], [ActionEnum.D], tc: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 12, [["2", "3", "4", "5", "6"], ["7", "8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.S, ActionEnum.H], tc: 3));
-			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new GameState { TrueCount = -2, RunningCount = -2, PlayerHand = new TestHand(12), Rules = new BlackjackRules(2, 0.7m) { IsSurrenderAllowed = false } }, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new GameState { TrueCount = -2, RunningCount = -2, PlayerHand = new TestHand(12), Rules = new BlackjackRules(2, 70) { IsSurrenderAllowed = false } }, [Card.RANKS], [ActionEnum.H]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 13, [["4", "5", "6"], ["2", "3", "7", "8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.S, ActionEnum.H], tc: -2));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 14, [["2", "3", "4", "5", "6"], ["7", "8", "9", "10", "J", "Q", "K", "A"]], [ActionEnum.S, ActionEnum.H], tc: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 15, [["2", "3", "4", "5", "6", "10", "J", "Q", "K"], ["7", "8", "9", "A"]], [ActionEnum.S, ActionEnum.H], tc: 4, issurrenderallowed: false));
-			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new GameState { TrueCount = 5, RunningCount = 5, PlayerHand = new TestHand(16), Rules = new BlackjackRules(2, 0.7m) { IsSurrenderAllowed = false } }, [["2", "3", "4", "5", "6", "9", "10", "J", "Q", "K"], ["7", "8", "A"]], [ActionEnum.S, ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, new GameState { TrueCount = 5, RunningCount = 5, PlayerHand = new TestHand(16), Rules = new BlackjackRules(2, 70) { IsSurrenderAllowed = false } }, [["2", "3", "4", "5", "6", "9", "10", "J", "Q", "K"], ["7", "8", "A"]], [ActionEnum.S, ActionEnum.H]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 17, [["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"], ["A"]], [ActionEnum.S, ActionEnum.R]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 18, [Card.RANKS], [ActionEnum.S]));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_2D_WITHDEVIATIONS, 19, [Card.RANKS], [ActionEnum.S]));
@@ -170,7 +171,7 @@ namespace BJTesting
 		[TestMethod]
 		public void DeviatedStrategy_IsCorrectForPairs()
 		{
-			var rules = new BlackjackRules(2, 0.7m)
+			var rules = new BlackjackRules(2, 70)
 			{
 				IsSurrenderAllowed = true,
 				CanResplitAces = true,
@@ -234,7 +235,7 @@ namespace BJTesting
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 15, [Card.RANKS], [ActionEnum.H], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 16, [Card.RANKS], [ActionEnum.H], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 17, [Card.RANKS], [ActionEnum.H], issoft: true, isnew: false, hits: 1));
-			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 18, [["2", "3", "4", "5", "6"], ["7", "8"], ["9", "10", "J", "Q", "K", "A"]], [ActionEnum.H, ActionEnum.S, ActionEnum.H], issoft: true, isnew: false, hits: 1));
+			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 18, [["2", "3", "4", "5", "6", "7", "8"], ["9", "10", "J", "Q", "K", "A"]], [ActionEnum.S, ActionEnum.H], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 19, [Card.RANKS], [ActionEnum.S], issoft: true, isnew: false, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 20, [Card.RANKS], [ActionEnum.S], issoft: true, hits: 1));
 			Assert.IsTrue(TestRowResult(BASICSTRATEGY_4D, 21, [Card.RANKS], [ActionEnum.S], issoft: true, hits: 1));
@@ -266,7 +267,7 @@ namespace BJTesting
 		[TestMethod]
 		public void BasicStrategy_IsCorrectFor_4DSplits()
 		{
-			var rules = new BlackjackRules(6, 0.7m)
+			var rules = new BlackjackRules(6, 70)
 			{
 				IsSurrenderAllowed = true,
 				CanResplitAces = true,

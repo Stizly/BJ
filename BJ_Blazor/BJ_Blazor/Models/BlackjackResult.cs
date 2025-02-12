@@ -5,6 +5,7 @@
 		public BlackjackSetupDTO SetupDTO { get; set; }
 		public int Bankruptcies { get; set; }
 		public int Iteration { get; set; }
+		public string ErrorMessage { get; set; }
 
 		public int TotalRounds => SetupDTO.RoundsPerPlayerSimulated * SetupDTO.SimulatedPlayers;
 		public decimal AverageProfit { get; private set; }
@@ -20,12 +21,42 @@
 			StandardDeviation = (decimal)Math.Sqrt(profits.Average(p => Math.Pow((double)(p - AverageProfit), 2)));
 			MaxProfit = profits.Max();
 		}
+
+		public string GetRulesList()
+		{
+			List<string> rules = [];
+			if (SetupDTO.DAS)
+				rules.Add("DAS");
+			else
+				rules.Add("NDAS");
+
+			if (SetupDTO.DealerHitsSoft17)
+				rules.Add("H17");
+			else
+				rules.Add("S17");
+
+			if (SetupDTO.CanHitAcesAfterSplit)
+				rules.Add("HSA");
+			else
+				rules.Add("NHSA");
+
+			if (SetupDTO.IsSurrenderAllowed)
+				rules.Add("SURR");
+			else
+				rules.Add("NSURR");
+
+			rules.Add($"SP{SetupDTO.PairSplitLimits}");
+
+			rules.Add($"Blackjack pays {SetupDTO.BlackjackPayout}x");
+
+			return string.Join(", ", rules);
+		}
 	}
 
 	public class BlackjackSetupDTO
 	{
 		public int ShoeSize { get; set; }
-		public decimal DeckPenetration { get; set; }
+		public int DeckPenetration { get; set; }
 		public decimal BlackjackPayout { get; set; }
 		public int PairSplitLimits { get; set; }
 		public bool DAS { get; set; } = true;
