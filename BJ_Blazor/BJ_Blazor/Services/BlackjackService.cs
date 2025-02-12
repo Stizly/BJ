@@ -1,4 +1,5 @@
 ﻿using BJ;
+using BJ.PlayingStrategies;
 using BJ_Blazor.Models;
 
 namespace BJ_Blazor.Services
@@ -22,7 +23,13 @@ namespace BJ_Blazor.Services
 					IsSurrenderAllowed = setup.IsSurrenderAllowed
 				};
 				var table = new Table(rules);
-				PlayingStrategy playingstrategy = setup.ShoeSize > 2 ? new PlayingStrategy_4D() : new PlayingStrategy_2D();
+				PlayingStrategy playingstrategy = setup.ShoeSize switch
+				{
+					1 => new PlayingStrategy_SD_H17(),
+					2 => new PlayingStrategy_DD_H17(),
+					_ => new PlayingStrategy_Shoe_H17()
+				};
+
 				if (setup.UseIllustrious18)
 					playingstrategy.UseDeviations();
 

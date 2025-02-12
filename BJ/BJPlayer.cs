@@ -1,4 +1,6 @@
-﻿namespace BJ
+﻿using BJ.PlayingStrategies;
+
+namespace BJ
 {
 	public class BJPlayer(Table table, Player player)
 	{
@@ -100,7 +102,7 @@
 						continue;
 
 					case ActionEnum.H:
-						while (Player.PlayingStrategy.GetAction(gs) == ActionEnum.H)
+						do
 						{
 							int previousvalue = hand.Value;
 							var hit = Table.Hit();
@@ -111,6 +113,8 @@
 								break;
 							}
 						}
+						while (Player.PlayingStrategy.GetAction(gs) == ActionEnum.H);
+
 						if (!hand.IsBusted)
 						{
 							undecidedhands.Add(new() { Hand = hand, Payout = bet, Message = $"Staying on a {hand.Value} against dealer's {upcard.Value}." });

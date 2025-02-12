@@ -1,9 +1,9 @@
 ﻿namespace BJ
 {
-	public class BlackjackRules(int shoesize, decimal deckpen)
+	public class BlackjackRules(int shoesize, int deckpen)
 	{
 		public int ShoeSize { get; private set; } = shoesize;
-		public decimal DeckPenetration { get; set; } = deckpen;
+		public int DeckPenetrationPercent { get; set; } = deckpen;
 		public decimal BlackjackPayout { get; set; } = 1.5m;
 		public int PairSplitLimit { get; set; } = 3;
 		public bool DAS { get; set; } = true;
@@ -93,7 +93,11 @@
 		public Card Hit()
 		{
 			if (Shoe.Count == 0)
-				return null;
+			{
+				//this really shouldn't happen... but this prevents crashing and should only have a very minor effect on EV
+				RefillShoe();
+			}
+
 
 			var topcard = Shoe.First();
 			Shoe.Remove(topcard);
@@ -101,10 +105,7 @@
 			return topcard;
 		}
 
-		public bool DoReshuffleShoe()
-		{
-			return Shoe.Count <= (1 - Rules.DeckPenetration) * 52 * Rules.ShoeSize;
-		}
+		public bool DoReshuffleShoe() => Shoe.Count <= 52 * Rules.ShoeSize * (100 - Rules.DeckPenetrationPercent) / 100;
 
 		public int GetTrueCount() => RunningCount * 52 / Shoe.Count;
 	}
