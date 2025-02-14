@@ -1,13 +1,14 @@
 using BJ;
+using BJ.PlayingStrategies;
 
 namespace BJTesting
 {
 	[TestClass]
 	public class BJTesting
 	{
-		private readonly static Table BJTABLE1 = new Table(new BlackjackRules(1, 75));
-		private readonly static Table BJTABLE2 = new Table(new BlackjackRules(2, 75));
-		private readonly static Table BJTABLE4 = new Table(new BlackjackRules(4, 75));
+		private readonly static Table BJTABLE1 = new Table(new BlackjackRules(1, 75), new Dealer(new DealerStrategy_H17()));
+		private readonly static Table BJTABLE2 = new Table(new BlackjackRules(2, 75), new Dealer(new DealerStrategy_H17()));
+		private readonly static Table BJTABLE4 = new Table(new BlackjackRules(4, 75), new Dealer(new DealerStrategy_H17()));
 		[TestMethod]
 		public void Shoe_IsCorrectSize()
 		{
@@ -31,7 +32,7 @@ namespace BJTesting
 		[TestMethod]
 		public void RunningCount_UpdatesCorrectly()
 		{
-			var bj2 = new Table(new BlackjackRules(2, 75));
+			var bj2 = new Table(new BlackjackRules(2, 75), new Dealer(new DealerStrategy_H17()));
 			bj2.ShuffleShoe(c => c.Value);
 			for (int i = 0; i < 4; i++)
 			{
@@ -45,9 +46,9 @@ namespace BJTesting
 		[TestMethod]
 		public void RefillShoe_IsCorrect()
 		{
-			var bj1_dontreshuffle = new Table(new BlackjackRules(1, 70));
-			var bj1_doreshuffle = new Table(new BlackjackRules(1, 70));
-			var bj6_doreshuffle = new Table(new BlackjackRules(6, 80));
+			var bj1_dontreshuffle = new Table(new BlackjackRules(1, 70), new Dealer(new DealerStrategy_H17()));
+			var bj1_doreshuffle = new Table(new BlackjackRules(1, 70), new Dealer(new DealerStrategy_H17()));
+			var bj6_doreshuffle = new Table(new BlackjackRules(6, 80), new Dealer(new DealerStrategy_H17()));
 
 			for (int i = 0; i < 52 / 2; i++)
 			{

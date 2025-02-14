@@ -22,16 +22,21 @@ namespace BJ_Blazor.Services
 					PairSplitLimit = setup.PairSplitLimits,
 					IsSurrenderAllowed = setup.IsSurrenderAllowed
 				};
-				var table = new Table(rules);
+				var dealer = new Dealer(setup.DealerHitsSoft17 ? new DealerStrategy_H17() : new DealerStrategy_S17());
+				var table = new Table(rules, dealer);
 				PlayingStrategy playingstrategy = setup.ShoeSize switch
 				{
-					1 => new PlayingStrategy_SD_H17(),
-					2 => new PlayingStrategy_DD_H17(),
-					_ => new PlayingStrategy_Shoe_H17()
+					1 => new PlayingStrategySD(),
+					2 => new PlayingStrategyDD(),
+					_ => new PlayingStrategyShoe()
 				};
 
 				if (setup.UseIllustrious18)
 					playingstrategy.UseDeviations();
+				if (!setup.DAS)
+					playingstrategy.NDAS();
+				if (!setup.DealerHitsSoft17)
+					playingstrategy.S17();
 
 				var player = new Player(
 					setup.Bankroll,

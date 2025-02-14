@@ -6,9 +6,11 @@ namespace BJTesting
 	[TestClass]
 	public class PlayingStrategyTests
 	{
-		private static readonly PlayingStrategy BASICSTRATEGY_2D = new PlayingStrategy_DD_H17();
-		private static readonly PlayingStrategy BASICSTRATEGY_2D_WITHDEVIATIONS = new PlayingStrategy_DD_H17().UseDeviations();
-		private static readonly PlayingStrategy BASICSTRATEGY_4D = new PlayingStrategy_Shoe_H17();
+		private static readonly PlayingStrategy BASICSTRATEGY_2D = new PlayingStrategyDD();
+		private static readonly PlayingStrategy BASICSTRATEGY_2D_WITHDEVIATIONS = new PlayingStrategyDD().UseDeviations();
+		private static readonly PlayingStrategy BASICSTRATEGY_4D = new PlayingStrategyShoe();
+		private static readonly PlayingStrategy DEALERSTRATEGY_H17 = new DealerStrategy_H17();
+		private static readonly PlayingStrategy DEALERSTRATEGY_S17 = new DealerStrategy_S17();
 
 		[TestMethod]
 		public void BasicStrategy_IsCorrectForFreshHardHands()
@@ -301,6 +303,80 @@ namespace BJTesting
 			Assert.IsFalse(BASICSTRATEGY_2D_WITHDEVIATIONS.DoTakeInsurrance(gamestate));
 			gamestate.TrueCount = 3;
 			Assert.IsTrue(BASICSTRATEGY_2D_WITHDEVIATIONS.DoTakeInsurrance(gamestate));
+		}
+
+		[TestMethod]
+		public void DealerStrategy_IsCorrectForHardHands_H17()
+		{
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 4, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 5, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 6, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 7, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 8, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 9, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 10, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 11, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 12, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 13, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 14, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 15, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 16, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 17, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 18, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 19, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 20, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 21, [Card.RANKS], [ActionEnum.S]));
+		}
+
+		[TestMethod]
+		public void DealerStrategy_IsCorrectForSoftHands_H17()
+		{
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 13, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 14, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 15, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 16, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 17, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 18, [Card.RANKS], [ActionEnum.S], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 19, [Card.RANKS], [ActionEnum.S], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 20, [Card.RANKS], [ActionEnum.S], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_H17, 21, [Card.RANKS], [ActionEnum.S], issoft: true));
+		}
+
+		[TestMethod]
+		public void DealerStrategy_IsCorrectForHardHands_S17()
+		{
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 4, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 5, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 6, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 7, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 8, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 9, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 10, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 11, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 12, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 13, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 14, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 15, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 16, [Card.RANKS], [ActionEnum.H]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 17, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 18, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 19, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 20, [Card.RANKS], [ActionEnum.S]));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 21, [Card.RANKS], [ActionEnum.S]));
+		}
+
+		[TestMethod]
+		public void DealerStrategy_IsCorrectForSoftHands_S17()
+		{
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 13, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 14, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 15, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 16, [Card.RANKS], [ActionEnum.H], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 17, [Card.RANKS], [ActionEnum.S], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 18, [Card.RANKS], [ActionEnum.S], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 19, [Card.RANKS], [ActionEnum.S], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 20, [Card.RANKS], [ActionEnum.S], issoft: true));
+			Assert.IsTrue(TestRowResult(DEALERSTRATEGY_S17, 21, [Card.RANKS], [ActionEnum.S], issoft: true));
 		}
 	}
 }

@@ -16,22 +16,16 @@
 	public class Table
 	{
 		public BlackjackRules Rules { get; private set; }
-
-		public Card DealerUpcard { get; private set; }
-		public Card DealerDowncard { get; private set; }
-
-		public Hand DealerHand { get; private set; }
+		public Dealer Dealer { get; private set; }
 		public List<Card> Shoe { get; private set; }
 
 		public int RunningCount { get; private set; }
 
-		public Table(BlackjackRules rules)
+		public Table(BlackjackRules rules, Dealer dealer)
 		{
 			Rules = rules;
-
+			Dealer = dealer;
 			Shoe = [];
-			DealerHand = new Hand();
-
 			RefillShoe();
 		}
 
@@ -68,7 +62,7 @@
 
 		public void ClearHands(Player player)
 		{
-			DealerHand.Clear();
+			Dealer.Hand.Clear();
 			player.ClearHands();
 		}
 
@@ -79,15 +73,15 @@
 			{
 				hand.AddCard(Hit(), false);
 			}
-			DealerDowncard = Hit();
-			DealerHand.AddCard(DealerDowncard, false);
+			Dealer.Downcard = Hit();
+			Dealer.Hand.AddCard(Dealer.Downcard, false);
 
 			foreach (var hand in PlayerHands)
 			{
 				hand.AddCard(Hit(), false);
 			}
-			DealerUpcard = Hit();
-			DealerHand.AddCard(DealerUpcard, false);
+			Dealer.Upcard = Hit();
+			Dealer.Hand.AddCard(Dealer.Upcard, false);
 		}
 
 		public Card Hit()
@@ -106,7 +100,6 @@
 		}
 
 		public bool DoReshuffleShoe() => Shoe.Count <= 52 * Rules.ShoeSize * (100 - Rules.DeckPenetrationPercent) / 100;
-
 		public int GetTrueCount() => RunningCount * 52 / Shoe.Count;
 	}
 }
