@@ -6,8 +6,8 @@ namespace BJTesting
 	[TestClass]
 	public class BetSpreadTesting
 	{
-		private static readonly Player PLAYER_1HAND = new(1000, new BettingStrategy(BettingStrategies.BuildBetSpread([0, 25], [25, 25, 50, 75, 100])), new PlayingStrategy_DD_H17());
-		private static readonly Player PLAYER_2HANDSAT2 = new(1000, new BettingStrategy(BettingStrategies.BuildBetSpread([0, 25], [25, 25, 50, 75, 100]), [1, 1, 2]), new PlayingStrategy_DD_H17());
+		private static readonly Player PLAYER_1HAND = new(1000, new BettingStrategy(BettingStrategies.BuildBetSpread([0, 25], [25, 25, 50, 75, 100])), new PlayingStrategyDD());
+		private static readonly Player PLAYER_2HANDSAT2 = new(1000, new BettingStrategy(BettingStrategies.BuildBetSpread([0, 25], [25, 25, 50, 75, 100]), [1, 1, 2]), new PlayingStrategyDD());
 
 		[TestMethod]
 		public void BuildBetTestSpread_IsCorrectForNegativeCounts()

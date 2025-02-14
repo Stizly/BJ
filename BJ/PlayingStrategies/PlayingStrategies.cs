@@ -23,6 +23,9 @@
 
 	public abstract class PlayingStrategy
 	{
+		protected bool IsDAS;
+		protected bool IsH17;
+
 		public Func<GameState, ActionEnum>[][] HardHandStrategy { get; set; }
 		public Func<GameState, ActionEnum>[][] SoftHandStrategy { get; set; }
 		public Func<GameState, ActionEnum>[][] PairsStrategy { get; set; }
@@ -35,6 +38,8 @@
 			HardHandStrategy = HardSoftPairStrategy[0];
 			SoftHandStrategy = HardSoftPairStrategy[1];
 			PairsStrategy = HardSoftPairStrategy[2];
+			IsDAS = true;
+			IsH17 = true;
 		}
 
 		public PlayingStrategy UseDeviations()
@@ -44,6 +49,10 @@
 			InsuranceDeviation = PlayingStrategies.TakeInsuranceDeviation;
 			return this;
 		}
+		public virtual PlayingStrategy S17() => this;
+		public virtual PlayingStrategy H17() => this;
+		public virtual PlayingStrategy NDAS() => this;
+		public virtual PlayingStrategy DAS() => this;
 
 		public ActionEnum GetAction(GameState gamestate)
 		{
