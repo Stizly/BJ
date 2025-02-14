@@ -16,6 +16,6 @@ Go to http://localhost:5000 in your browser, and you're done!
 # There has to be limitations to a free service... what's the catch?
 This is a completely free program managed by just me. I'm not a professional Blackjack player or cardcounter. The only limitations are that some features are a work-in-progress.
 Some limitations include:
-- Strategy assumes H17. There is no S17, but it is a work-in-progress.
 - All calculations are done by performing simulations, there is no pre-calculated EVs, advantage at certain counts, hours until variance is overcame calculations, etc.
 - The executable is only available on Windows.
+- RoR is only calculated based on players who are bankrupt in N rounds, not how many statistically will bankrupt eventually.
